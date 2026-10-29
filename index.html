@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shivam Singh</title>
+<meta name="description" content="Shivam Singh: speech and language ML researcher, first author of BuzzASR (EMNLP 2026), a swarm of 102 single-language speech recognition models. Photographs, research and writing.">
+<meta name="author" content="Shivam Singh">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shivam Singh">
+<meta property="og:description" content="Shivam Singh: speech and language ML researcher, first author of BuzzASR (EMNLP 2026), a swarm of 102 single-language speech recognition models. Photographs, research and writing.">
+<meta property="og:url" content="https://vamsin07.github.io/">
+<meta property="og:image" content="https://vamsin07.github.io/img/ledge.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@realshivamsingh">
+<meta name="theme-color" content="#4E1A1E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 18'%3E%3Cellipse cx='7' cy='5' rx='5' ry='4' fill='none' stroke='%23999' stroke-width='1.2'/%3E%3Cellipse cx='13' cy='4' rx='5' ry='4' fill='none' stroke='%23999' stroke-width='1.2'/%3E%3Cellipse cx='11' cy='11.5' rx='8' ry='5.5' fill='%23E3A21A'/%3E%3Crect x='8' y='6.5' width='2' height='10' fill='%23222'/%3E%3Crect x='12.5' y='6.5' width='2' height='10' fill='%23222'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500&family=Libre+Franklin:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* base reset (the claude.ai viewer added these automatically) */
+  html { -webkit-text-size-adjust: 100%; }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+  a.email { text-decoration: none; color: inherit; }
+</style>
+<style>
+/* Layout: a two-room gallery. Room I hangs the photographs salon-style on an oxblood wall,
+   each with a museum placard; Room II (green wall) holds the work. The epigraph is the
+   exhibition title, lettered on the wall. One deliberate look, so colors are fixed. */
+:root {
+  color-scheme: dark;
+  --wall: #4E1A1E;        /* oxblood, Room I */
+  --wall-deep: #3A1216;
+  --wall2: #1D332D;       /* Baroque green, Room II */
+  --wall2-deep: #14261F;
+  --lobby: #17110F;
+  --letter: #F1E6D6;      /* wall lettering */
+  --letter-dim: #CDB9A3;
+  --gilt: #D6AE62;
+  --frame: #1B1310;
+  --mat: #F2EEE6;
+  --card: #FBF9F4;
+  --card-ink: #1E1A17;
+  --card-dim: #6B635A;
+  --display: "Bodoni Moda", "Didot", Georgia, serif;
+  --label: "Libre Franklin", "Franklin Gothic Medium", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --read: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --study: #17120F;
+  --study-deep: #0F0B09;
+  --study-ink: #EDE4D6;
+  --study-dim: #B8A894;
+}
+* { box-sizing: border-box; }
+body { background: var(--lobby); color: var(--letter); font-family: var(--label); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--lobby); }
+a { color: inherit; text-decoration-color: var(--gilt); text-underline-offset: 3px; }
+a:hover { color: var(--gilt); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-offset: 3px; }
+.inner { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ---------- rooms ---------- */
+.room { position: relative; }
+.room-1 { background: radial-gradient(ellipse 70% 40% at 50% 0%, #6A2A2C, transparent 70%), linear-gradient(var(--wall), var(--wall-deep)); }
+.room-2 { background: radial-gradient(ellipse 70% 40% at 50% 0%, #2A4A41, transparent 70%), linear-gradient(var(--wall2), var(--wall2-deep)); }
+.room .inner { padding-block: 64px 80px; }
+.room-no { font-family: var(--label); font-size: 0.74rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gilt); margin: 0 0 14px; }
+
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--letter-dim); padding-block: 18px; }
+.top nav { display: flex; gap: 18px; flex-wrap: wrap; }
+.top a { text-decoration: none; }
+
+/* exhibition title */
+.title-wall { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 56px; align-items: end; margin-bottom: 72px; }
+.exh { font-family: var(--display); font-weight: 500; font-style: italic; font-size: clamp(2.1rem, 5.4vw, 3.9rem); line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+.who { font-family: var(--display); font-weight: 700; font-size: 1.35rem; margin: 22px 0 0; letter-spacing: 0.02em; }
+.who span { display: block; font-family: var(--label); font-weight: 400; font-size: 0.85rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--letter-dim); margin-top: 6px; }
+.cred { margin: 14px 0 0; font-size: 0.9rem; color: var(--letter); max-width: 34em; }
+.cred a { text-decoration: none; border-bottom: 1px solid var(--gilt); }
+.skip { display: inline-block; margin-top: 14px; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gilt); text-decoration: none; border: 1px solid rgba(214,174,98,0.5); padding: 6px 12px; }
+.skip:hover { background: rgba(214,174,98,0.12); color: var(--gilt); }
+.wall-text { font-size: 1rem; color: var(--letter); max-width: 30em; display: grid; gap: 12px; }
+.wall-text p { margin: 0; }
+.wall-text .sig { color: var(--letter-dim); font-size: 0.88rem; }
+
+/* ---------- frames ---------- */
+.piece { margin: 0; break-inside: avoid; display: grid; gap: 12px; justify-items: start; position: relative; }
+.frame { background: var(--frame); padding: 9px; box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 30px -12px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.35); position: relative; width: 100%; }
+.frame::before { content: ""; position: absolute; left: 10%; right: 10%; top: -46px; height: 60px; background: radial-gradient(ellipse 50% 100% at 50% 100%, rgba(255,236,200,0.16), transparent 70%); pointer-events: none; }
+.mat { background: var(--mat); padding: clamp(10px, 2.2vw, 22px); }
+.mat img { display: block; width: 100%; height: auto; max-width: 100%; }
+.placard { background: var(--card); color: var(--card-ink); padding: 9px 12px 10px; width: min(260px, 100%); box-shadow: 0 3px 6px rgba(0,0,0,0.3); font-size: 0.8rem; line-height: 1.4; display: grid; gap: 2px; }
+.placard b { font-weight: 600; font-size: 0.86rem; }
+.placard i { font-style: italic; }
+.placard .m { color: var(--card-dim); font-size: 0.74rem; }
+.placard .d { margin-top: 3px; }
+
+.centerpiece { display: grid; justify-items: center; margin-bottom: 80px; }
+.centerpiece .piece { justify-items: center; width: min(720px, 100%); }
+.centerpiece .frame { padding: 12px; }
+.hang-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: end; margin-bottom: 72px; }
+.hang-hero .piece:first-child .frame { max-width: 460px; }
+/* salon hang: even rows, frames centered on one eye-level line per row */
+.salon { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 64px 48px; align-items: center; }
+.salon .piece { justify-items: center; }
+.salon .piece .placard { justify-self: center; }
+.salon .wide { grid-column: span 2; }
+.salon .small .frame { max-width: 80%; }
+
+/* ---------- room II ---------- */
+.works { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.object { background: #0F1418; border: 9px solid var(--frame); box-shadow: 0 18px 30px -12px rgba(0,0,0,0.6); padding: 20px 20px 16px; color: #E8EBEF; width: 100%; min-width: 0; }
+.obj-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.obj-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #8E9AA8; }
+.replay { font-family: var(--mono); font-size: 0.7rem; background: none; border: 1px solid #2A3646; color: #8E9AA8; border-radius: 999px; padding: 2px 10px; cursor: pointer; }
+.replay:hover { color: #E8EBEF; }
+.sentence { font-family: var(--display); font-weight: 500; font-size: 1.1rem; margin: 10px 0 8px; overflow-wrap: anywhere; }
+.row { display: grid; grid-template-columns: 72px minmax(0, 1fr) 28px; gap: 10px; align-items: start; padding: 8px 0; border-top: 1px solid #2A3646; }
+.row-name { font-size: 0.8rem; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 3px; min-width: 0; }
+.chip { font-family: var(--mono); font-size: 0.7rem; padding: 1px 5px; border-radius: 3px; background: #1B2430; border: 1px solid #2A3646; transition: opacity .25s ease; }
+.native .chip { background: rgba(214,174,98,0.16); border-color: rgba(214,174,98,0.6); color: #F3DDAA; }
+.chip.pending { opacity: 0.12; }
+.count { text-align: right; font-family: var(--mono); font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.native .count { color: var(--gilt); }
+
+.catalogue { display: grid; gap: 0; }
+.entry { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 18px; padding: 16px 0; border-top: 1px solid rgba(241,230,214,0.18); }
+.entry:last-child { border-bottom: 1px solid rgba(241,230,214,0.18); }
+.when { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gilt); padding-top: 4px; }
+.entry h3 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin: 0 0 4px; line-height: 1.3; }
+.entry p { margin: 0; color: var(--letter-dim); font-size: 0.95rem; }
+.entry .figs { color: var(--letter); margin-top: 6px; font-size: 0.9rem; }
+.entry .figs b { font-family: var(--display); color: var(--gilt); font-size: 1.05rem; margin-right: 3px; }
+
+/* ---------- room III: reading room ---------- */
+.room-3 { background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(214,174,98,0.14), transparent 70%), linear-gradient(var(--study), var(--study-deep)); }
+.reading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 56px; align-items: start; }
+.room-intro { margin: 0; color: var(--letter-dim); max-width: 28em; }
+.posts { list-style: none; margin: 0; padding: 0; display: grid; }
+.posts:empty { display: none; }
+.post { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 18px; padding: 16px 0; border-top: 1px solid rgba(241,230,214,0.18); }
+.post:last-child { border-bottom: 1px solid rgba(241,230,214,0.18); }
+.post h3 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin: 0 0 4px; }
+.post p { margin: 0; color: var(--letter-dim); font-size: 0.95rem; }
+.lectern { background: var(--card); color: var(--card-ink); padding: 18px 20px; box-shadow: 0 6px 14px rgba(0,0,0,0.35); max-width: 420px; }
+.lectern p { margin: 0; font-size: 0.92rem; color: var(--card-dim); }
+.lectern .lectern-title { font-family: var(--display); font-style: italic; font-size: 1.2rem; color: var(--card-ink); margin-bottom: 6px; }
+.posts:not(:empty) + .lectern { display: none; }
+
+/* ---------- room II depth ---------- */
+.r2-head { display: grid; gap: 18px; max-width: 46em; margin-bottom: 40px; }
+.r2-title { font-size: clamp(1.9rem, 4.4vw, 3rem); }
+.r2-lede { margin: 0 0 24px; color: var(--letter); max-width: 44em; font-size: 1.04rem; }
+.numbers { margin: 0 0 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; border-top: 1px solid rgba(241,230,214,0.25); border-bottom: 1px solid rgba(241,230,214,0.25); padding-block: 26px; }
+.numbers div { min-width: 0; }
+.numbers dt { font-family: var(--display); font-weight: 700; font-size: clamp(2.1rem, 4.4vw, 3.1rem); line-height: 1; color: var(--gilt); font-variant-numeric: tabular-nums; }
+.numbers dt small { font-size: 0.5em; color: var(--letter-dim); }
+.numbers dd { margin: 8px 0 0; font-size: 0.88rem; color: var(--letter-dim); line-height: 1.4; }
+.sub-h { font-family: var(--label); font-size: 0.78rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gilt); margin: 0 0 20px; padding-top: 8px; }
+.works { margin-bottom: 72px; }
+.stage-art { display: grid; gap: 40px; justify-items: start; }
+.stage-art .piece:nth-child(2) .frame { max-width: 62%; }
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; margin-bottom: 72px; }
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 16px; }
+.steps li { counter-increment: s; position: relative; padding-left: 40px; color: var(--letter-dim); font-size: 0.97rem; }
+.steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; font-family: var(--display); font-weight: 700; font-size: 1.4rem; color: var(--gilt); line-height: 1.1; }
+.steps b { color: var(--letter); font-weight: 600; }
+.found { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 48px; align-items: start; margin-bottom: 72px; }
+.chart-fig { margin: 0; background: rgba(0,0,0,0.18); border: 1px solid rgba(241,230,214,0.14); padding: 18px 18px 14px; min-width: 0; }
+.chart { width: 100%; height: auto; display: block; }
+.chart text { font-family: var(--label); fill: var(--letter-dim); font-size: 12px; }
+.chart .val { fill: var(--letter); font-weight: 600; font-size: 13px; }
+.chart .axis { stroke: rgba(241,230,214,0.3); }
+.chart .base { stroke: rgba(241,230,214,0.5); stroke-dasharray: 3 3; }
+.chart-cap { font-size: 0.84rem; color: var(--letter-dim); margin-top: 10px; }
+.findings { margin: 0; padding: 0; list-style: none; display: grid; gap: 16px; }
+.findings li { color: var(--letter-dim); font-size: 0.97rem; padding-left: 16px; border-left: 2px solid rgba(214,174,98,0.5); }
+.findings b { color: var(--letter); font-weight: 600; }
+.wild { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 72px; }
+.wild-card { background: var(--card); color: var(--card-ink); padding: 22px 24px; box-shadow: 0 10px 22px -8px rgba(0,0,0,0.5); min-width: 0; display: grid; gap: 10px; align-content: start; }
+.wild-card a { color: var(--card-ink); }
+.wild-kicker { margin: 0; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: #8A5F00; font-weight: 600; }
+.wild-card h4 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.3rem; line-height: 1.2; }
+.wild-card p { margin: 0; font-size: 0.93rem; }
+.wild-note { color: var(--card-dim); font-size: 0.84rem !important; }
+.bench { width: 100%; border-collapse: collapse; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+.bench caption { caption-side: bottom; text-align: left; font-size: 0.78rem; color: var(--card-dim); padding-top: 6px; }
+.bench th { text-align: left; font-weight: 600; font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--card-dim); border-bottom: 1px solid #D9D2C6; padding: 4px 6px 6px 0; }
+.bench td { padding: 6px 6px 6px 0; border-bottom: 1px solid #ECE6DC; }
+.bench td:not(:first-child), .bench th:not(:first-child) { text-align: right; white-space: nowrap; }
+.bench .us td { font-weight: 600; background: #F6EBD2; }
+.bench .us td:first-child { padding-left: 6px; }
+.work-points { margin: 8px 0 0; padding-left: 1.1em; display: grid; gap: 5px; color: var(--letter-dim); font-size: 0.93rem; }
+.work-points li::marker { color: var(--gilt); }
+.ports { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.92rem; }
+
+/* ---------- post: plain blog article, follows the reader's light/dark setting ---------- */
+.post-view { --p-bg: #FFFFFF; --p-fg: #242424; --p-muted: #6B6B6B; --p-rule: #E6E6E6; --p-soft: #F2F2F2; --p-mid: #D9D2C3; --p-strong: #C9952B;
+  background: var(--p-bg); color: var(--p-fg); min-height: 100vh; color-scheme: light; }
+@media (prefers-color-scheme: dark) { .post-view { --p-bg: #121212; --p-fg: #E6E6E6; --p-muted: #A0A0A0; --p-rule: #2E2E2E; --p-soft: #262626; --p-mid: #5A4E36; --p-strong: #D9A53A; color-scheme: dark; } }
+:root[data-theme="light"] .post-view { --p-bg: #FFFFFF; --p-fg: #242424; --p-muted: #6B6B6B; --p-rule: #E6E6E6; --p-soft: #F2F2F2; --p-mid: #D9D2C3; --p-strong: #C9952B; color-scheme: light; }
+:root[data-theme="dark"] .post-view { --p-bg: #121212; --p-fg: #E6E6E6; --p-muted: #A0A0A0; --p-rule: #2E2E2E; --p-soft: #262626; --p-mid: #5A4E36; --p-strong: #D9A53A; color-scheme: dark; }
+.mcol { max-width: 680px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.mbar { border-bottom: 1px solid var(--p-rule); }
+.mbar .mcol { padding-block: 16px; }
+.mhome { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.95rem; color: var(--p-fg); text-decoration: none; font-weight: 600; }
+.mtitle { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; font-size: clamp(2rem, 6vw, 2.6rem); line-height: 1.2; letter-spacing: -0.015em; margin: 48px 0 12px; text-wrap: balance; }
+.msub { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 1.3rem; line-height: 1.4; color: var(--p-muted); margin: 0 0 24px; }
+.mmeta { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.9rem; color: var(--p-muted); margin: 0 0 40px; padding-bottom: 20px; border-bottom: 1px solid var(--p-rule); }
+.mbody { font-family: "Source Serif 4", Charter, Georgia, "Times New Roman", serif; font-size: 1.25rem; line-height: 1.6; }
+.mbody p { margin: 0 0 1.5em; }
+.mbody h2 { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1.25; letter-spacing: -0.01em; margin: 2.2em 0 0.6em; }
+.mbody a { color: inherit; }
+.mbody hr { border: 0; text-align: center; margin: 2.4em 0; }
+.mbody hr::after { content: "· · ·"; color: var(--p-muted); letter-spacing: 0.6em; font-size: 1.2rem; }
+.meq { margin: 0.4em 0 1.6em; overflow-x: auto; text-align: center; }
+.meq math { font-size: 1.15em; }
+.mkey { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.85rem !important; color: var(--p-muted); margin: 8px 0 0 !important; }
+.mfig { margin: 0.6em 0 2em; }
+.mfig svg { width: 100%; height: auto; display: block; }
+.mfig figcaption { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.875rem; line-height: 1.45; color: var(--p-muted); text-align: center; margin-top: 10px; }
+.svgtext { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 13px; fill: var(--p-fg); }
+.svgtext .t-muted { fill: var(--p-muted); }
+.svgtext .t-big { font-size: 24px; font-weight: 700; fill: var(--p-fg); }
+.f-soft { fill: var(--p-soft); stroke: var(--p-rule); }
+.f-mid { fill: var(--p-mid); }
+.f-strong { fill: var(--p-strong); }
+.s-axis { stroke: var(--p-rule); stroke-width: 1.5; }
+.s-mean { stroke: var(--p-fg); stroke-dasharray: 4 4; }
+.f-low { fill: #C0574B; }
+.mseg { display: grid; gap: 10px; justify-content: center; font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 0.95rem; }
+.mseg div { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.mseg span { width: 76px; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.8rem; color: var(--p-muted); }
+.mseg b { font-weight: 400; padding: 2px 8px; background: var(--p-soft); border: 1px solid var(--p-rule); border-radius: 4px; }
+.mend { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; padding: 8px 0 80px; margin: 0; }
+.mend a { color: var(--p-fg); }
+
+/* ---------- lobby / visitor information ---------- */
+.lobby .inner { padding-block: 56px 64px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; }
+.lobby h2 { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 1.8rem; margin: 0 0 12px; }
+.lobby p { margin: 0; color: var(--letter-dim); }
+.links { list-style: none; margin: 0; padding: 0; display: grid; }
+.links li { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid rgba(241,230,214,0.14); min-width: 0; }
+.links .h { font-family: var(--mono); font-size: 0.82rem; color: var(--letter-dim); overflow-wrap: anywhere; text-align: right; }
+.mail { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+.email { font-family: var(--mono); font-size: 0.92rem; border: 1px solid rgba(241,230,214,0.25); padding: 6px 10px; user-select: all; }
+.copy { font-family: var(--label); font-size: 0.85rem; font-weight: 600; background: var(--gilt); color: #1B1310; border: 0; padding: 7px 12px; cursor: pointer; }
+.fine { grid-column: 1 / -1; font-size: 0.78rem; color: #8D7C6C; letter-spacing: 0.06em; }
+
+@media (max-width: 820px) {
+  .title-wall, .hang-hero, .works, .reading, .found, .wild, .stage, .lobby .inner { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .title-wall, .hang-hero { margin-bottom: 48px; }
+  .room .inner { padding-block: 40px 56px; }
+  .salon { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 16px; }
+  .salon .small .frame { max-width: 100%; }
+}
+@media (max-width: 620px) {
+  .hang-hero { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .frame { padding: 5px; }
+  .mat { padding: 7px; }
+  .placard { padding: 7px 9px 8px; font-size: 0.74rem; }
+  .placard b { font-size: 0.78rem; }
+  .placard .m { font-size: 0.68rem; }
+  .centerpiece { margin-bottom: 48px; }
+  .frame::before { display: none; }
+}
+@media (max-width: 480px) { .entry, .post { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+@media (prefers-reduced-motion: reduce) { .chip { transition: none; } }
+</style>
+</head>
+<body>
+<div id="gallery">
+<section class="room room-1" aria-labelledby="exh">
+  <div class="inner">
+    <div class="top"><span>Shivam Singh · San Francisco</span><nav aria-label="Rooms"><a href="#room-1">Room I</a><a href="#room-2">Room II</a><a href="#reading-room">Reading room</a><a href="#visit">Visit</a></nav></div>
+
+    <div class="title-wall" id="room-1">
+      <div>
+        <p class="room-no">Room I · Photographs</p>
+        <h1 class="exh" id="exh">“What is life, if not a sentient struggle to become?”</h1>
+        <p class="who">Shivam Singh<span>Works, n.d.</span></p>
+        <p class="cred">Speech &amp; language ML researcher · first author of <a href="#room-2">BuzzASR</a> (EMNLP 2026) · platform engineer at Walmart Global Tech</p>
+        <a class="skip" href="#room-2">Skip to the work →</a>
+      </div>
+      <div class="wall-text">
+        <p>When I'm not at my desk or in my bed, I'm reading Nietzsche and arguing with him (<i>Daybreak</i> is my favorite), standing too long in front of Baroque paintings, cooking something Mediterranean, playing tennis or golf, following Arsenal, listening to Mac Miller and Wu-Tang Clan, or drumming, occasionally.</p>
+        <p>This room is what I saw along the way: light in tunnels and on wet streets, desert skies, granite, and cities from bridges and rooftops.</p>
+        <p class="sig">The work is in Room II.</p>
+      </div>
+    </div>
+
+    <div class="centerpiece">
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/ledge.jpg" alt="Shivam in a red jacket standing at the edge of a rock ledge above a lake and forested valley, under a sky of glowing pink and purple storm clouds" width="1283" height="1400"></div></div>
+        <figcaption class="placard"><b>At the edge</b><span class="m">Somewhere near Mount Cook, South Island, New Zealand · n.d.</span><span class="d">The closest thing in this room to the words on the wall.</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="hang-hero">
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/tunnel.jpg" alt="Looking down a dark rock tunnel along old rail tracks toward a bright opening, a hiker silhouetted near the light" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Light, eventually</b><span class="m">n.d. · phone camera</span><span class="d">A tunnel walked end to end. Chiaroscuro without the paint.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/golf.jpg" alt="Silhouette of Shivam mid-swing on a driving range mat, a bucket of balls beside him and a sunny range beyond" width="900" height="1200"></div></div>
+        <figcaption class="placard"><b>Study of a swing</b><span class="m">n.d. · driving range</span><span class="d">The artist, in silhouette. The ball went somewhere.</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="salon">
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/market.jpg" alt="A rain-wet San Francisco street at sunset, pink sky between buildings, street lamps and a red signal" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Market Street, after rain</b><span class="m">San Francisco · n.d.</span><span class="d">The city's best light shows up for about four minutes.</span></figcaption>
+      </figure>
+      <figure class="piece small">
+        <div class="frame"><div class="mat"><img src="img/kuchisabishii.jpg" alt="A framed card defining the Japanese word kuchisabishii: when you're not hungry, but you eat because your mouth is lonely" width="1200" height="1199" loading="lazy"></div></div>
+        <figcaption class="placard"><b><i>Kuchisabishii</i> (口寂しい)</b><span class="m">Found text, framed</span><span class="d">When you're not hungry, but you eat because your mouth is lonely. The case for always cooking a little extra.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/joshua.jpg" alt="Night sky full of stars over silhouetted Joshua trees" width="902" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Nocturne with Joshua trees</b><span class="m">Desert · n.d. · long exposure</span></figcaption>
+      </figure>
+      <figure class="piece small">
+        <div class="frame"><div class="mat"><img src="img/drumstick.jpg" alt="An open palm with blisters, a worn wooden drumstick resting across it" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Practice</b><span class="m">Drumstick, blisters</span><span class="d">I drum occasionally. The blisters suggest otherwise.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/lights.jpg" alt="Blurred streaks of red, blue and yellow stage lights" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Untitled (somewhere loud)</b><span class="m">n.d. · motion blur</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/granite.jpg" alt="A sheer granite cliff above dark pines under a deep blue sky" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Granite, Yosemite</b><span class="m">n.d.</span><span class="d">Looking up for a long time.</span></figcaption>
+      </figure>
+      <figure class="piece wide">
+        <div class="frame"><div class="mat"><img src="img/brooklyn.jpg" alt="The Lower Manhattan skyline under bright clouds, seen through the steel trusses of the Brooklyn Bridge" width="1200" height="900" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Manhattan, from the Brooklyn Bridge</b><span class="m">New York · n.d.</span></figcaption>
+      </figure>
+      <figure class="piece small">
+        <div class="frame"><div class="mat"><img src="img/coral.jpg" alt="Cropped self-portrait: a coral linen shirt and a carved Māori hook pendant, a hei matau" width="675" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Self-portrait with <i>hei matau</i></b><span class="m">n.d. · cropped</span><span class="d">A carved Māori hook from New Zealand, worn for new beginnings and harmony. The face is withheld.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/fog.jpg" alt="A rocky outcrop above green scrub and a winding stream disappearing into thick fog, in the New Zealand landscape used as Mordor in The Lord of the Rings" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Walking into Mordor</b><span class="m">New Zealand · n.d.</span><span class="d">The landscape behind the Mordor battle in <i>The Return of the King</i>. The fog was not added in post.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/snow.jpg" alt="A freshly shoveled sidewalk between snowy lawns on a suburban street, bright sun and blue sky" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>First snow</b><span class="m">n.d.</span><span class="d">Someone shoveled the sidewalk. Someone always does.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/skytower.jpg" alt="Auckland's Sky Tower rising above office buildings against a blue sky with clouds" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Sky Tower</b><span class="m">Auckland · n.d.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/jungfrau.jpg" alt="A snow-covered Jungfrau peak under clouds, shown on the screen of a Sony camera with the date 2015-6-6 visible" width="1200" height="900" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Jungfrau, on the little screen</b><span class="m">Switzerland · 2015</span><span class="d">The only piece in the room that dates itself: the camera stamped it 6 June 2015, 4:02 PM.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/psg.jpg" alt="A navy Paris Saint-Germain shirt with O. Dembélé 10 on the back, hanging in a club store under a PSG football" width="900" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Enemy territory</b><span class="m">Official PSG store, Qatar · n.d.</span><span class="d">An Arsenal fan, browsing. Nothing was purchased.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/flight.jpg" alt="An airline meal tray of rice and curry, salads and a drink, lit pink by the cabin lights" width="675" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Dinner at cruising altitude</b><span class="m">Economy, somewhere above the clouds · n.d.</span><span class="d">See also: <i>kuchisabishii</i>.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="room room-2" id="room-2" aria-labelledby="r2">
+  <div class="inner">
+    <p class="room-no">Room II · The work</p>
+    <div class="r2-head">
+      <h2 class="exh r2-title" id="r2">Speech models for the languages most AI gets wrong</h2>
+      <p class="r2-lede">Big multilingual speech models split their capacity across a hundred languages, and most of those languages lose out. In <a href="https://arxiv.org/abs/2609.09554"><b>BuzzASR</b></a> (EMNLP 2026) we trained a separate Whisper-large-v3 for each of 102 languages instead, and for many of them gave the model a tokenizer built for that language. I'm first author, with Aditya Yadavalli, Catherine Arnett and Alex Warstadt (LeMN Lab, UC San Diego, and EleutherAI).</p>
+    </div>
+
+    <dl class="numbers" aria-label="Headline results">
+      <div><dt>77<small>/102</small></dt><dd>languages where BuzzASR beats Whisper-large-v3</dd></div>
+      <div><dt>2.18×</dt><dd>median drop in character error rate (2.84× mean)</dd></div>
+      <div><dt>27</dt><dd>languages where it's the best open system we tested, including Omnilingual 7B</dd></div>
+      <div><dt>~18K</dt><dd>downloads of the 102 models on Hugging Face in the past month</dd></div>
+    </dl>
+
+    <h3 class="sub-h">How it works</h3>
+    <div class="works">
+      <ol class="steps">
+        <li><b>Replace the tokenizer.</b> Whisper's byte-level BPE chops non-Latin scripts into tiny pieces. We train a BPE tokenizer on each language's own text, raising the median from 2.38 to 5.04 characters per token (13.77× for Lao).</li>
+        <li><b>Warm-start the new embeddings.</b> Each new token starts as the sum of the old Whisper sub-token vectors it replaces, so the model keeps what it already knows.</li>
+        <li><b>Teach the decoder the new vocabulary.</b> Mix text-only language modeling (on the Goldfish corpora) with speech recognition, then finish with plain ASR fine-tuning.</li>
+        <li><b>Pick the best per language.</b> Simple fine-tuning or the full recipe, three configurations each: 612 fine-tuned models in total.</li>
+      </ol>
+      <figure class="piece">
+        <div class="object" aria-label="One Estonian sentence decoded by two tokenizers">
+          <div class="obj-head"><span class="obj-label">Same sentence · same decoder</span><button class="replay" id="replay" type="button">Replay</button></div>
+          <p class="sentence" lang="et">Rahvusraamatukogu digitaalarhiiv sisaldab tuhandeid vanu ajaleheartikleid.</p>
+          <div class="row"><div class="row-name">Whisper</div><div class="chips" id="whisper"></div><div class="count" id="wc">28</div></div>
+          <div class="row native"><div class="row-name">BuzzASR</div><div class="chips" id="native"></div><div class="count" id="nc">10</div></div>
+        </div>
+        <figcaption class="placard"><b>Rahvusraamatukogu</b><span class="m">2026 · tokens on screen</span><span class="d">10 tokens instead of 28 for the same Estonian sentence. Time per token is fixed, so decoding finishes 2.4× sooner.</span></figcaption>
+      </figure>
+    </div>
+
+    <h3 class="sub-h">What we found</h3>
+    <div class="found">
+      <figure class="chart-fig">
+        <svg viewBox="0 0 420 250" role="img" aria-labelledby="chart-t chart-d" class="chart">
+          <title id="chart-t">Median CER reduction by Whisper zero-shot CER</title>
+          <desc id="chart-d">Under 5%: 0.93x. 5 to 15%: 1.59x. 15 to 30%: 2.41x. 30 to 50%: 3.20x. 50 to 80%: 4.84x. 80% and above: 6.27x.</desc>
+          <g class="bars"></g>
+        </svg>
+        <figcaption class="chart-cap">Median error reduction, grouped by how badly zero-shot Whisper does on each language. The worse Whisper is, the more a specialist helps.</figcaption>
+      </figure>
+      <ul class="findings">
+        <li><b>Biggest gains where Whisper is weakest.</b> A 3.45× median reduction across Whisper's 51 worst languages. Amharic goes from 191% CER to about 9%.</li>
+        <li><b>Native tokenizers decode faster.</b> Per-token speed is identical (about 73 tokens/s), so shorter outputs mean lower latency: 785 → 503 ms per utterance (median, ~1.6×), and 3.51× for scripts like Ge'ez and Georgian.</li>
+        <li><b>One language per model beats pairs.</b> Monolingual models have about 1.25× lower CER than bilingual ones, whether or not the two languages are related.</li>
+        <li><b>The full recipe wins where the tokenizer breaks.</b> Simple fine-tuning wins 55 languages and the full recipe 47; the full recipe dominates when Whisper's tokenizer gets under one character per token.</li>
+        <li><b>A one-line bug taught us a lot.</b> Our first tokenizers silently ignored their splitting rule because it was passed as a plain string. <a href="https://lemn-lab.github.io/buzz-asr/tokenizer/#a-bug-worth-knowing-about">The write-up</a>.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub-h">In the wild</h3>
+    <p class="r2-lede">Since the release, people we've never met have put the models to work, and tested them harder than we did.</p>
+    <div class="wild">
+      <article class="wild-card">
+        <p class="wild-kicker">On a phone, offline</p>
+        <h4>Hungarian, in a pocket</h4>
+        <p>A user in Hungary quantized BuzzASR/hungarian to GGUF (Q5_K_M, 1.1 GB) and uses it every day as offline voice input on a Samsung S24. A 28-second recording transcribes in about 20 seconds, faster than real time, with no internet. By their account, no other offline model they've tried handles Hungarian with such a low error rate.</p>
+        <p class="wild-note">Their testing also found what to fix next: the models output no punctuation, and words can merge where long audio is split.</p>
+      </article>
+      <article class="wild-card">
+        <p class="wild-kicker">Independent benchmark</p>
+        <h4>Hungarian: most accurate of 8</h4>
+        <table class="bench">
+          <caption>2,000 Common Voice 22 test clips, one RTX 3090, greedy decoding</caption>
+          <thead><tr><th scope="col">Model</th><th scope="col">WER %</th><th scope="col">Speed</th></tr></thead>
+          <tbody>
+            <tr class="us"><td>BuzzASR/hungarian</td><td>9.96</td><td>34×</td></tr>
+            <tr><td>NVIDIA Parakeet-TDT 0.6B v3</td><td>10.45</td><td>44×</td></tr>
+            <tr><td>Hungarian Whisper-turbo fine-tune</td><td>10.85</td><td>80×</td></tr>
+            <tr><td>NVIDIA Canary-1B v2</td><td>14.54</td><td>150×</td></tr>
+            <tr><td>Whisper-large-v3 (zero-shot)</td><td>17.80</td><td>23×</td></tr>
+          </tbody>
+        </table>
+        <p class="wild-note">Speed is audio duration ÷ processing time. Common Voice is in-domain for BuzzASR, which trained on Common Voice 25.</p>
+      </article>
+      <article class="wild-card">
+        <p class="wild-kicker">Independent evaluation</p>
+        <h4>Korean: read, conversational, telephone</h4>
+        <p>A speech engineer in Korea independently tested BuzzASR/korean against six other setups, scoring so that spacing and number notation don't count as errors.</p>
+        <table class="bench">
+          <thead><tr><th scope="col">Test audio</th><th scope="col">CER %</th><th scope="col">Rank</th></tr></thead>
+          <tbody>
+            <tr class="us"><td>Read speech (3 public sets)</td><td>3.72</td><td>1st of 7</td></tr>
+            <tr><td>Telephone, 8 kHz</td><td>5.36</td><td>2nd of 7</td></tr>
+            <tr><td>Conversational (KsponSpeech)</td><td>9.71</td><td>4th of 7</td></tr>
+          </tbody>
+        </table>
+        <p class="wild-note">On telephone audio, zero-shot Whisper is still ahead (5.02). We're now working together on what this means for evaluating Korean ASR.</p>
+      </article>
+      <article class="wild-card">
+        <p class="wild-kicker">Community ports</p>
+        <h4>Running everywhere</h4>
+        <ul class="ports">
+          <li><b>Apple MLX</b>, 8-bit, for Macs (Korean)</li>
+          <li><b>whisper.cpp / GGML</b>, for CPUs and edge devices (Korean)</li>
+          <li><b>Core ML / WhisperKit</b>, for iPhone (Sorani Kurdish)</li>
+          <li><b>GGUF, Q5_K_M</b>, for Android (Hungarian)</li>
+        </ul>
+        <p class="wild-note">Next for us: official quantized checkpoints with accuracy measured before and after quantization, punctuation, and faster turbo-based models.</p>
+      </article>
+    </div>
+
+    <h3 class="sub-h">On stage</h3>
+    <div class="stage">
+      <div class="stage-art">
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/talk.jpg" alt="A slide from the Cloudflare AI Meetup talk titled Why fewer tokens means faster decoding, comparing 28 Whisper tokens with 10 BuzzASR tokens for one Estonian sentence" width="1200" height="674" loading="lazy"></div></div>
+        <figcaption class="placard"><b>Why fewer tokens means faster decoding</b><span class="m">Cloudflare AI Meetup · 27 Oct 2026</span><span class="d">Slide 16 of the talk, live on the call.</span></figcaption>
+      </figure>
+      <figure class="piece">
+        <div class="frame"><div class="mat"><img src="img/keleti.jpg" alt="Budapest's Keleti railway station at night, its facade lit with a huge projection of two Arsenal players and the words YOU GOT THIS" width="871" height="1200" loading="lazy"></div></div>
+        <figcaption class="placard"><b>YOU GOT THIS</b><span class="m">Keleti station, Budapest · n.d.</span><span class="d">Arsenal, projected across a train station. Budapest, the city where BuzzASR had its EMNLP poster. Lifelong Gunner.</span></figcaption>
+      </figure>
+      </div>
+      <div class="catalogue">
+        <div class="entry"><span class="when">Oct 2026</span><div>
+          <h3>Cloudflare AI Meetup</h3>
+          <p>Invited talk on BuzzASR, hosted by Juan Miguel Cejuela: why specialist models beat one model for everything, how native tokenizers cut decoding time, and what that means for voice AI at the edge, from per-language routing to models people already run offline on their phones.</p>
+          <p class="figs">The Q&amp;A asked whether the same efficiency could come from working on the representations between encoder and decoder. Still thinking about it.</p>
+        </div></div>
+        <div class="entry"><span class="when">Oct 2026</span><div>
+          <h3>EMNLP 2026, Budapest</h3>
+          <p>BuzzASR was presented at EMNLP 2026.</p>
+        </div></div>
+        <div class="entry"><span class="when">2026</span><div>
+          <h3>SCiL @ ACL 2026</h3>
+          <p>An early BuzzASR poster at SCiL, at ACL 2026.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <h3 class="sub-h">Elsewhere</h3>
+    <div class="catalogue">
+      <div class="entry"><span class="when">2026 –</span><div>
+        <h3>RL post-training for speech recognition</h3>
+        <p>GRPO on top of BuzzASR with verifiable rewards for accuracy, hallucination suppression, proper nouns and code-switching. Does a better tokenizer make RL work better?</p>
+      </div></div>
+      <div class="entry"><span class="when">2025 –</span><div>
+        <h3>Walmart Global Tech · Platform Engineer</h3>
+        <p>Production infrastructure for internal agentic AI, multi-agent and ML systems: model serving, inference routing, rollout and evaluation.</p>
+        <ul class="work-points">
+          <li>Cut cross-region inference latency 45% by geo-sharding model traffic with Istio and consistent-hash routing for session affinity.</li>
+          <li>Own model rollouts with Flagger: canary analysis, Prometheus/Grafana success-rate gating, autoscaling and automatic rollback on regressions.</li>
+          <li>Built pre-release evaluation for non-deterministic agent behavior, comparing responses across production, QA and staging to catch behavioral diffs before release.</li>
+          <li>Built a diff-aware webhook validator (JsonPath and GraphQL) for Agent-to-Agent (A2A) protocol message validation.</li>
+        </ul>
+      </div></div>
+      <div class="entry"><span class="when">Before</span><div>
+        <h3>Parabole.ai, Dell, and an M.S. at UC San Diego</h3>
+        <p>CUDA kernels and KV caching (30% lower inference latency), and predictive maintenance on hardware telemetry.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="room room-3" id="reading-room" aria-labelledby="r3">
+  <div class="inner">
+    <p class="room-no">Room III · Reading room</p>
+    <div class="reading">
+      <div>
+        <h2 class="exh" id="r3" style="font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-bottom: 14px;">Writing</h2>
+        <p class="room-intro">Essays and notes on speech, languages, research, and whatever Nietzsche is arguing with me about this month.</p>
+      </div>
+      <!-- Posts go in this list, newest first:
+        <li class="post"><span class="when">Nov 2026</span><div><h3><a href="URL">Title</a></h3><p>One-line summary.</p></div></li>
+      -->
+      <ul class="posts" id="posts"><li class="post"><span class="when">29 Oct 2026</span><div><h3><a href="#cloudflare-qa">What the Cloudflare Q&amp;A made me think about</a></h3><p>Fewer tokens or cheaper tokens, tokenizers for CTC, BPE vs Unigram, and RL with GRPO: five research directions for BuzzASR 2.0.</p></div></li></ul>
+      <div class="lectern" id="posts-empty">
+        <p class="lectern-title">Nothing on the lectern yet</p>
+        <p>The first essays are being written. Check back soon, or say hi below and I'll send them your way.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lobby" id="visit" aria-labelledby="visit-h">
+  <div class="inner">
+    <div>
+      <h2 id="visit-h">Visitor information</h2>
+      <p>Open to conversations about speech, languages, philosophy and good olive oil.</p>
+      <div class="mail">
+        <a class="email" id="email" href="mailto:shs046@ucsd.edu">shs046@ucsd.edu</a>
+        <button class="copy" id="copy" type="button">Copy email</button>
+      </div>
+    </div>
+    <ul class="links">
+      <li><a href="https://x.com/realshivamsingh">X</a><span class="h">@realshivamsingh</span></li>
+      <li><a href="https://github.com/vamsin07">GitHub</a><span class="h">vamsin07</span></li>
+      <li><a href="https://www.linkedin.com/in/vamsinn">LinkedIn</a><span class="h">vamsinn</span></li>
+      <li><a href="https://huggingface.co/BuzzASR">Hugging Face</a><span class="h">BuzzASR</span></li>
+    </ul>
+    <p class="fine">All photographs by Shivam Singh unless noted. Please don't touch the frames.</p>
+  </div>
+</section>
+
+</div>
+
+<article class="post-view" id="cloudflare-qa" hidden aria-labelledby="post-title">
+  <div class="mbar"><div class="mcol"><a href="#reading-room" class="mhome">← Shivam Singh</a></div></div>
+  <div class="mcol">
+    <h1 class="mtitle" id="post-title">What the Cloudflare Q&amp;A made me think about</h1>
+    <p class="msub">A question about tokens turned into five things I want to try next with BuzzASR.</p>
+    <p class="mmeta">Shivam Singh · 8 min read · Oct 29, 2026</p>
+
+    <div class="mbody">
+      <p>On Tuesday I gave a talk about BuzzASR at Cloudflare's AI Meetup. BuzzASR is a set of 102 speech recognition models, one for each language, and the short version of the talk was that specialists beat one model that tries to do every language. Giving each model its own tokenizer also makes it faster.</p>
+      <p>The talk went fine. The Q&amp;A was better. Someone asked a question I haven't stopped thinking about, and it pulled a few other loose threads along with it. This post is me writing them down.</p>
+
+      <h2>Fewer tokens, or cheaper tokens?</h2>
+      <p>The question was roughly this: you got your speedup by changing the tokenizer. Could you get the same thing by changing what the encoder hands to the decoder?</p>
+      <p>I find it easiest to think of decoding time as two numbers multiplied together:</p>
+      <div class="meq"><math display="block"><mi>T</mi><mo>≈</mo><mi>N</mi><mo>·</mo><mo>(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>+</mo><mi>k</mi><mi>F</mi><mo>)</mo></math></div>
+      <p><i>N</i> is how many tokens the model writes, and the part in brackets is what each one costs. Some of that cost is fixed, and some of it grows with <i>F</i>, the number of audio frames the decoder looks at every time it writes a token.</p>
+      <p>Our tokenizers shrink <i>N</i>. For one Estonian sentence, Whisper needs 28 tokens and our model needs 10. The cost per token didn't change at all in our measurements (about 73 tokens a second for every model), so the whole speedup came from writing fewer tokens.</p>
+      <p>The question from the audience is about the other number, <i>F</i>. Whisper always pads audio to 30 seconds, so its encoder produces 1,500 frames even if you only said three words, and every token the decoder writes has to look at all of them.</p>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 230" role="img" aria-labelledby="d1t d1d">
+          <title id="d1t">Work per sentence, steps times frames</title>
+          <desc id="d1d">Three rectangles drawn to scale. Whisper: 28 steps by 1,500 frames. New tokenizer: 10 steps by 1,500 frames. New tokenizer with padding trimmed for a 6-second clip: 10 steps by 300 frames, about 14 times less work.</desc>
+          <g class="svgtext">
+            <rect x="20" y="40" width="280" height="150" class="f-soft"/>
+            <text x="20" y="28">Whisper's tokenizer</text>
+            <text x="160" y="120" text-anchor="middle" class="t-muted">28 × 1,500</text>
+            <text x="160" y="212" text-anchor="middle" class="t-muted">28 tokens</text>
+            <rect x="340" y="40" width="100" height="150" class="f-mid"/>
+            <text x="340" y="28">New tokenizer</text>
+            <text x="390" y="120" text-anchor="middle" class="t-muted">10 × 1,500</text>
+            <text x="390" y="212" text-anchor="middle" class="t-muted">10 tokens</text>
+            <rect x="490" y="160" width="100" height="30" class="f-strong"/>
+            <text x="490" y="28">+ padding trimmed</text>
+            <text x="540" y="150" text-anchor="middle" class="t-muted">10 × 300</text>
+            <text x="540" y="212" text-anchor="middle" class="t-muted">10 tokens</text>
+          </g>
+        </svg>
+        <figcaption>Each box is tokens × audio frames for the same sentence, drawn to scale, assuming a 6-second clip. Changing the tokenizer makes the box narrower. Trimming the padding makes it shorter. Together it's about 14× less work.</figcaption>
+      </figure>
+      <p>If you could cut <i>F</i> without losing what's in the audio, every token would get cheaper. And because the two effects multiply, you'd keep the tokenizer gains on top.</p>
+      <p>I'd start with the boring version: throw away the frames that are just padding. Most of our test clips are well under 30 seconds, so that alone might be a big win. After that I'd try averaging neighbouring frames, merging frames that look the same (silence, long vowels), and finally a small learned layer that squeezes the encoder output into a fixed number of vectors.</p>
+      <p>What worries me is who pays for it. Squeezing the audio will probably hurt fast speech and low-resource languages first, and those are exactly the languages BuzzASR exists for. So every result has to be broken down by language, not averaged.</p>
+
+      <h2>Does this work beyond Whisper?</h2>
+      <p>Everything we built sits on top of Whisper, so it's fair to ask whether we just got lucky with Whisper's tokenizer.</p>
+      <p>We have a hint that we didn't. Swapping the tokenizer helped most in the languages where Whisper's tokenizer was doing the worst job, needing more than one token for every character. In those 18 languages the new tokenizer won 16 times. Where Whisper's tokenizer was already doing fine, it won about a third of the time.</p>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 210" role="img" aria-labelledby="d2t d2d">
+          <title id="d2t">How often the new tokenizer wins</title>
+          <desc id="d2d">Languages where Whisper uses more than one token per character: the new tokenizer wins 89 percent of 18 languages. One to two characters per token: 45 percent of 20. More than two: 35 percent of 63.</desc>
+          <g class="svgtext">
+            <line x1="40" y1="170" x2="620" y2="170" class="s-axis"/>
+            <rect x="90" y="36.5" width="110" height="133.5" class="f-strong"/>
+            <text x="145" y="28" text-anchor="middle">89%</text>
+            <text x="145" y="192" text-anchor="middle" class="t-muted">&lt; 1 char/token (18)</text>
+            <rect x="265" y="102.5" width="110" height="67.5" class="f-mid"/>
+            <text x="320" y="94" text-anchor="middle">45%</text>
+            <text x="320" y="192" text-anchor="middle" class="t-muted">1–2 (20)</text>
+            <rect x="440" y="117.5" width="110" height="52.5" class="f-soft"/>
+            <text x="495" y="109" text-anchor="middle">35%</text>
+            <text x="495" y="192" text-anchor="middle" class="t-muted">&gt; 2 (63)</text>
+          </g>
+        </svg>
+        <figcaption>How often the new tokenizer beat plain fine-tuning, grouped by how many characters Whisper fits into one token.</figcaption>
+      </figure>
+      <p>If that pattern holds, you should be able to predict the gain before training anything, just by counting how many characters each token covers before and after:</p>
+      <div class="meq"><math display="block"><mtext>speedup</mtext><mo>≈</mo><mfrac><msub><mi>c</mi><mtext>new</mtext></msub><msub><mi>c</mi><mtext>old</mtext></msub></mfrac><mo>=</mo><mfrac><mn>5.04</mn><mn>2.38</mn></mfrac><mo>≈</mo><mn>2.1</mn></math></div>
+      <p>(Those are our median numbers across all 102 languages.) I'd like to test this on a few other open speech models with different tokenizers: write the prediction down first, then run the recipe and see if it holds. If it does, people could tell whether this is worth doing without training anything.</p>
+
+      <h2>What about CTC models?</h2>
+      <p>A lot of speech models don't write text one token at a time. CTC models label every slice of audio at once, using an extra "nothing here" label, and then clean up the result.</p>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 150" role="img" aria-labelledby="d3t d3d">
+          <title id="d3t">How a CTC model spells hello</title>
+          <desc id="d3d">Ten audio frames labelled h, h, nothing, e, nothing, l, nothing, l, o, o. Merging repeats and dropping the nothing labels gives hello.</desc>
+          <g class="svgtext" text-anchor="middle" id="ctc-frames">
+            <text x="320" y="20" class="t-muted">one label per slice of audio</text>
+            <text x="320" y="104" class="t-muted">merge repeats, drop the blanks (·)</text>
+            <text x="320" y="138" class="t-big">hello</text>
+          </g>
+        </svg>
+        <figcaption>The blank between the two l's is what lets it spell a double letter.</figcaption>
+      </figure>
+      <p>So fewer tokens doesn't make these models faster, and the speed story above doesn't apply. The tokenizer still matters, though, because a CTC model can only produce as many labels as it has audio frames:</p>
+      <div class="meq"><math display="block"><mi>U</mi><mo>+</mo><mi>R</mi><mo>≤</mo><mi>F</mi></math><p class="mkey">labels written + repeated letters that need a blank between them ≤ audio frames</p></div>
+      <p>Bigger tokens make that limit easier to fit under, but each one is rarer, and with only about 10 hours of audio for some languages, rare is a problem. For CTC I'd ask a different question: not "is it faster?" but "what's the right size of token for this script?"</p>
+
+      <h2>BPE or Unigram?</h2>
+      <p>All our tokenizers are BPE, which always splits a word the same way. The other common option, Unigram, gives every possible split a probability:</p>
+      <div class="meq"><math display="block"><mi>P</mi><mo>(</mo><mtext>split</mtext><mo>)</mo><mo>=</mo><munder><mo>∏</mo><mi>i</mi></munder><mi>p</mi><mo>(</mo><msub><mtext>piece</mtext><mi>i</mi></msub><mo>)</mo></math></div>
+      <p>The useful part is that you can sample from it, so during training the model sees the same word split in different ways:</p>
+      <figure class="mfig">
+        <div class="mseg">
+          <div><span>always</span><b>ajalehe</b><b>artik</b><b>leid</b></div>
+          <div><span>sampled</span><b>aja</b><b>lehe</b><b>artik</b><b>leid</b></div>
+          <div><span>sampled</span><b>ajaleht</b><b>e</b><b>artikleid</b></div>
+        </div>
+        <figcaption>Made-up splits of the Estonian word <i>ajaleheartikleid</i> ("newspaper articles"), just to show the idea.</figcaption>
+      </figure>
+      <p>For languages where we only have a few hours of audio, that variety might work like free extra data. The version I like is a mix: train with random splits so the model gets the variety, then use the single best split when transcribing, so outputs stay short and fast. BPE has a similar trick called BPE-dropout, so we'd compare the two.</p>
+
+      <h2>Can reinforcement learning fix the loops?</h2>
+      <p>This is the one I'm most excited about. Every so often a speech model gets stuck repeating the same word over and over. Early in the project those loops pushed some of our error rates over 100%. Right now we stop them with decoding settings, but an independent evaluation of our Korean model showed those settings make everything else slightly worse, by 0.3 to 0.9 points.</p>
+      <p>I'd rather teach the model not to loop in the first place, using GRPO. The idea is simple: for each clip, let the model write eight transcripts, score them, and nudge it toward the ones that beat the group's average.</p>
+      <div class="meq"><math display="block"><msub><mi>A</mi><mi>i</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>r</mi><mi>i</mi></msub><mo>−</mo><mi>μ</mi></mrow><mi>σ</mi></mfrac></math><p class="mkey">how much better transcript <i>i</i> scored than the group's average <i>μ</i>, scaled by the spread <i>σ</i></p></div>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 230" role="img" aria-labelledby="d5t d5d">
+          <title id="d5t">Eight transcripts for one clip</title>
+          <desc id="d5d">Eight bars with scores 0.92, 0.88, 0.95, 0.40, 0.90, 0.05, 0.93 and 0.85. The average is about 0.74. Six are above it and get reinforced. Number 4 added words that weren't said and number 6 looped, so they get pushed down.</desc>
+          <g class="svgtext" id="grpo"></g>
+        </svg>
+        <figcaption>Example scores for eight transcripts of one clip. The dashed line is the group average (0.74). Above it gets reinforced, below it gets discouraged.</figcaption>
+      </figure>
+      <p>The score is accuracy minus a penalty for loops and a penalty for hallucinated words, including any text at all on clips that are just silence:</p>
+      <div class="meq"><math display="block"><mi>r</mi><mo>=</mo><mo>(</mo><mn>1</mn><mo>−</mo><mtext>CER</mtext><mo>)</mo><mo>−</mo><msub><mi>λ</mi><mtext>loop</mtext></msub><mo>·</mo><mtext>loop</mtext><mo>−</mo><msub><mi>λ</mi><mtext>hal</mtext></msub><mo>·</mo><mtext>made-up words</mtext></math></div>
+      <p>I'd love to reward efficiency too, but if you reward short answers, the model just learns to stop early. So we'd measure it instead of rewarding it.</p>
+      <p>The comparison I'm most curious about is where to start from. We have two versions of every model: one fine-tuned the simple way, and one with the new tokenizer. The second writes shorter outputs, so each training sample is cheaper to generate. My guess is that it learns faster per hour of GPU time, especially for scripts that Whisper chops into tiny pieces.</p>
+
+      <h2>Before all of that</h2>
+      <p>There's something more practical to do first. A user in Hungary compressed our Hungarian model down to 1.1 GB, and now uses it every day as offline voice input on their phone. A 28-second voice note takes about 20 seconds to transcribe, with no internet. It took them six hours to figure out how to convert it.</p>
+      <p>Nobody should have to do that. So our next step is to release official compressed versions ourselves: GGUF for Android and whisper.cpp, Core ML for iPhones, and MLX for Macs. We'll publish how much accuracy each compression level costs, for every language, and fix the two problems that user found. The models don't output punctuation, because we trained them on transcripts without it, and words sometimes run together where a long recording gets split up.</p>
+
+      <hr>
+      <p>None of this is answered yet, which is the fun part. If you're working on any of it, I'd love to hear from you. And thanks to Juan Miguel and the Cloudflare team for having me.</p>
+    </div>
+    <p class="mend"><a href="#reading-room">← Back to the site</a></p>
+  </div>
+</article>
+<script>
+(() => {
+  const whisper = ["·Rah","v","us","ra","amat","uk","og","u","·dig","ita","alar","hi","iv","·sis","ald","ab","·tu","hand","e","id","·van","u","·aj","ale","heart","ikle","id","."];
+  const native = ["·Rahvus","raamatukogu","·digitaal","arhiiv","·sisaldab","·tuhandeid","·vanu","·ajalehe","artik","leid."];
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fill = (el, toks) => { el.innerHTML = ""; return toks.map(t => { const s = document.createElement("span"); s.className = "chip"; s.textContent = t; el.appendChild(s); return s; }); };
+  let timers = [];
+  function play() {
+    timers.forEach(clearTimeout); timers = [];
+    const w = fill(document.getElementById("whisper"), whisper);
+    const n = fill(document.getElementById("native"), native);
+    const wc = document.getElementById("wc"), nc = document.getElementById("nc");
+    if (reduce) { wc.textContent = whisper.length; nc.textContent = native.length; return; }
+    w.concat(n).forEach(c => c.classList.add("pending"));
+    wc.textContent = "0"; nc.textContent = "0";
+    w.forEach((c, i) => timers.push(setTimeout(() => { c.classList.remove("pending"); wc.textContent = i + 1; }, 300 + i * 110)));
+    n.forEach((c, i) => timers.push(setTimeout(() => { c.classList.remove("pending"); nc.textContent = i + 1; }, 300 + i * 110)));
+  }
+  play();
+  // post diagrams that are easier to lay out in code (colors come from CSS classes)
+  (() => {
+    const NS = "http://www.w3.org/2000/svg";
+    const mk = (g, t, a, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; g.appendChild(e); return e; };
+    const ctc = document.getElementById("ctc-frames");
+    if (ctc) ["h","h","·","e","·","l","·","l","o","o"].forEach((c, i) => {
+      const x = 70 + i * 52;
+      mk(ctc, "rect", { x, y: 34, width: 44, height: 44, rx: 4, class: c === "·" ? "f-soft" : "f-mid" });
+      mk(ctc, "text", { x: x + 22, y: 62, class: c === "·" ? "t-muted" : "" }, c);
+    });
+    const g = document.getElementById("grpo");
+    if (g) {
+      const r = [0.92, 0.88, 0.95, 0.40, 0.90, 0.05, 0.93, 0.85], mean = r.reduce((a, b) => a + b) / r.length;
+      const base = 180, h = 140, y = v => base - v * h, bw = 50;
+      mk(g, "line", { x1: 40, x2: 620, y1: base, y2: base, class: "s-axis" });
+      mk(g, "line", { x1: 40, x2: 620, y1: y(mean), y2: y(mean), class: "s-mean" });
+      r.forEach((v, i) => {
+        const x = 60 + i * 70, up = v >= mean;
+        mk(g, "rect", { x, y: y(v), width: bw, height: base - y(v), class: up ? "f-strong" : "f-low" });
+        mk(g, "text", { x: x + bw / 2, y: y(v) - 6, "text-anchor": "middle" }, v.toFixed(2));
+        mk(g, "text", { x: x + bw / 2, y: base + 18, "text-anchor": "middle", class: "t-muted" }, "#" + (i + 1));
+      });
+      mk(g, "text", { x: 60 + 3 * 70 + 25, y: y(0.40) - 22, "text-anchor": "middle", class: "t-muted" }, "added words");
+      mk(g, "text", { x: 60 + 5 * 70 + 25, y: y(0.05) - 22, "text-anchor": "middle", class: "t-muted" }, "looped");
+    }
+  })();
+  // reading view: show a post when its hash is in the address, otherwise the gallery
+  const route = () => {
+    const post = document.getElementById("cloudflare-qa"), gal = document.getElementById("gallery");
+    const on = location.hash === "#cloudflare-qa";
+    post.hidden = !on; gal.hidden = on;
+    if (on) window.scrollTo(0, 0);
+    else if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+  };
+  window.addEventListener("hashchange", route); route();
+  // bar chart, drawn to scale from the paper's numbers
+  (() => {
+    const data = [["<5%",0.93],["5–15%",1.59],["15–30%",2.41],["30–50%",3.20],["50–80%",4.84],["≥80%",6.27]];
+    const g = document.querySelector(".chart .bars"); if (!g) return;
+    const NS = "http://www.w3.org/2000/svg", x0 = 10, w = 400, top = 24, h = 180, max = 7;
+    const y = v => top + h - (v / max) * h, bw = w / data.length;
+    const el = (t, a, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; g.appendChild(e); return e; };
+    el("line", { x1: x0, x2: x0 + w, y1: top + h, y2: top + h, class: "axis" });
+    el("line", { x1: x0, x2: x0 + w, y1: y(1), y2: y(1), class: "base" });
+    el("text", { x: x0 + w, y: y(1) - 5, "text-anchor": "end" }, "1× = no change");
+    data.forEach(([lab, v], i) => {
+      const cx = x0 + bw * i + bw / 2;
+      el("rect", { x: cx - bw * 0.32, y: y(v), width: bw * 0.64, height: top + h - y(v), fill: "#D6AE62", opacity: v < 1 ? 0.45 : 1 });
+      el("text", { x: cx, y: y(v) - 6, "text-anchor": "middle", class: "val" }, v.toFixed(2) + "×");
+      el("text", { x: cx, y: top + h + 18, "text-anchor": "middle" }, lab);
+    });
+    el("text", { x: x0 + w / 2, y: top + h + 40, "text-anchor": "middle" }, "Whisper-large-v3 zero-shot CER");
+  })();
+  document.getElementById("replay").addEventListener("click", play);
+  const btn = document.getElementById("copy");
+  btn.addEventListener("click", () => {
+    const text = document.getElementById("email").textContent;
+    const done = () => { btn.textContent = "Copied"; setTimeout(() => btn.textContent = "Copy email", 1600); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(document.getElementById("email")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Press ⌘C / Ctrl+C"; };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+})();
+</script>
+</body>
+</html>
