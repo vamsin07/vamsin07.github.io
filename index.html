@@ -518,7 +518,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
         <h3>Walmart Global Tech · Platform Engineer</h3>
         <p>Production infrastructure for internal agentic AI, multi-agent and ML systems: model serving, inference routing, rollout and evaluation.</p>
         <ul class="work-points">
-          <li>Proposed the architecture for an MCP server that gives AI coding assistants read-only access to a core platform registry. My design was adopted. <a href="#mcp-server" style="color:var(--gilt)">How I designed it →</a></li>
+          <li>Proposed the architecture for an MCP server that gives our internal AI agent read-only access to a core platform registry. My design was adopted, and it's now used by 500+ application teams, serving thousands of engineers. <a href="#mcp-server" style="color:var(--gilt)">How I designed it →</a></li>
           <li>Cut cross-region inference latency 45% by geo-sharding model traffic with Istio and consistent-hash routing for session affinity.</li>
           <li>Own model rollouts with Flagger: canary analysis, Prometheus/Grafana success-rate gating, autoscaling and automatic rollback on regressions.</li>
           <li>Built pre-release evaluation for non-deterministic agent behavior, comparing responses across production, QA and staging to catch behavioral diffs before release.</li>
@@ -545,7 +545,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
       <!-- Posts go in this list, newest first:
         <li class="post"><span class="when">Nov 2026</span><div><h3><a href="URL">Title</a></h3><p>One-line summary.</p></div></li>
       -->
-      <ul class="posts" id="posts"><li class="post"><span class="when">30 Oct 2026</span><div><h3><a href="#mcp-server">Putting an MCP server in front of a system you can't afford to break</a></h3><p>Three ways to give AI coding assistants access to a core registry, why the boring option won, and the math behind a hard load ceiling.</p></div></li><li class="post"><span class="when">29 Oct 2026</span><div><h3><a href="#cloudflare-qa">What the Cloudflare Q&amp;A made me think about</a></h3><p>Fewer tokens or cheaper tokens, tokenizers for CTC, BPE vs Unigram, and RL with GRPO: five research directions for BuzzASR 2.0.</p></div></li></ul>
+      <ul class="posts" id="posts"><li class="post"><span class="when">30 Oct 2026</span><div><h3><a href="#mcp-server">Putting an MCP server in front of a system you can't afford to break</a></h3><p>Three ways to give an internal AI agent access to a core registry, why the boring option won, and the math behind a hard load ceiling.</p></div></li><li class="post"><span class="when">29 Oct 2026</span><div><h3><a href="#cloudflare-qa">What the Cloudflare Q&amp;A made me think about</a></h3><p>Fewer tokens or cheaper tokens, tokenizers for CTC, BPE vs Unigram, and RL with GRPO: five research directions for BuzzASR 2.0.</p></div></li></ul>
       <div class="lectern" id="posts-empty">
         <p class="lectern-title">Nothing on the lectern yet</p>
         <p>The first essays are being written. Check back soon, or say hi below and I'll send them your way.</p>
@@ -661,7 +661,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
       </figure>
       <p>If that pattern holds, you should be able to predict the gain before training anything, just by counting how many characters each token covers before and after:</p>
       <div class="meq"><math display="block"><mtext>speedup</mtext><mo>≈</mo><mfrac><msub><mi>c</mi><mtext>new</mtext></msub><msub><mi>c</mi><mtext>old</mtext></msub></mfrac><mo>=</mo><mfrac><mn>5.04</mn><mn>2.38</mn></mfrac><mo>≈</mo><mn>2.1</mn></math></div>
-      <p>(Those are our median numbers across all 102 languages.) I'd like to test this on a few other open speech models with different tokenizers: write the prediction down first, then run the recipe and see if it holds. If it does, people could tell whether this is worth doing without training anything.</p>
+      <p>(Those are our median numbers across all 102 languages.) We actually measured about 1.6×, so the simple ratio overestimates. Part of the gap is that the median ratio across languages isn't the same as the median speedup per utterance. And as above, this only predicts waiting time for a single request, not cost in batched serving. I'd like to test this on a few other open speech models with different tokenizers: write the prediction down first, then run the recipe and see if it holds. If it does, people could tell whether this is worth doing without training anything.</p>
 
       <h2>What about CTC models?</h2>
       <p>A lot of speech models don't write text one token at a time. CTC models label every slice of audio at once, using an extra "nothing here" label, and then clean up the result.</p>
@@ -726,32 +726,32 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
   <div class="mbar"><div class="mcol"><a href="#reading-room" class="mhome">← Shivam Singh</a></div></div>
   <div class="mcol">
     <h1 class="mtitle" id="post2-title">Putting an MCP server in front of a system you can't afford to break</h1>
-    <p class="msub">How I designed a read-only bridge between AI coding assistants and a core platform registry, and why the boring option won.</p>
+    <p class="msub">How I designed a read-only bridge between our internal AI agent and a core platform registry, and why the boring option won.</p>
     <p class="mmeta">Shivam Singh · 9 min read · Oct 30, 2026</p>
 
     <div class="mbody">
       <p>Every large engineering org has a system everyone quietly depends on. Ours is a registry: for every application, it knows who owns it, what environments it runs in, what it talks to, which policies apply and where its endpoints live. People look things up in a web portal. Programs talk to it through an API, after they've registered as a consumer and written their own queries.</p>
-      <p>Then AI coding assistants showed up. Engineers wanted to ask Claude Code, Copilot or Cursor "who owns this service?" or "what's configured in prod?" and get a real answer, not a guess. The standard way to give an assistant that ability is MCP, the Model Context Protocol: you run a server that offers a few tools, and any MCP client can call them.</p>
+      <p>Then we built an internal AI agent, and engineers wanted to ask it "who owns this service?" or "what's configured in prod?" and get a real answer, not a guess. The standard way to give an agent that ability is MCP, the Model Context Protocol: you run a server that offers a few tools, and any MCP client can call them.</p>
       <p>Writing the tools is an afternoon. The hard part is that the thing on the other end is a system the rest of the platform needs to stay up. This post is about the design I proposed for that bridge, the three options I compared, and why we went with the most boring one.</p>
 
-      <h2>AI clients are not normal API clients</h2>
-      <p>A normal API consumer is a program someone wrote on purpose. It calls you at a predictable rate, it was load-tested (hopefully), and when it breaks someone gets paged. An AI assistant behaves differently in three ways that matter:</p>
+      <h2>AI agents are not normal API clients</h2>
+      <p>A normal API consumer is a program someone wrote on purpose. It calls you at a predictable rate, it was load-tested (hopefully), and when it breaks someone gets paged. An AI agent behaves differently in three ways that matter:</p>
       <p><b>It's bursty.</b> An agent working through a task can call the same tool ten times in a few seconds, often with the same argument, because it forgot it already asked.</p>
       <p><b>It retries.</b> If a call fails, the client retries, the agent retries, and sometimes the human hits enter again. Each layer means well. Together they multiply.</p>
-      <p><b>It fans out.</b> One prompt like "check all our services" can turn into dozens of calls at once. Multiply by every engineer with an assistant open, and the traffic shape looks nothing like what the registry was built for.</p>
-      <p>So the real requirement wasn't "expose the data." It was: <i>no matter what the AI clients do, the load reaching the registry has a hard ceiling.</i></p>
+      <p><b>It fans out.</b> One prompt like "check all our services" can turn into dozens of calls at once. Multiply by every engineer talking to the agent at once, and the traffic shape looks nothing like what the registry was built for.</p>
+      <p>So the real requirement wasn't "expose the data." It was: <i>no matter what the agent does, the load reaching the registry has a hard ceiling.</i></p>
 
       <h2>The shape of it</h2>
-      <p>The server offers exactly two tools, both read-only. One returns an application's details. The other returns its details for a single environment. Nothing writes, which removes a whole class of problems (and makes retries safe, as we'll see).</p>
+      <p>The server offers four tools, all read-only, each returning one focused slice of the registry: for example, an application's details, or its details for a single environment. Nothing writes, which removes a whole class of problems (and makes retries safe, as we'll see).</p>
       <figure class="mfig">
         <svg viewBox="0 0 640 300" role="img" aria-labelledby="m1t m1d">
           <title id="m1t">Request path from AI client to registry</title>
-          <desc id="m1d">AI clients on the left send requests to a stateless MCP server in the middle. Inside the server, a request passes through four layers in order: identify the caller, rate limit, cache, and circuit breaker. Only cache misses that pass every layer continue to the registry API on the right, under a fixed requests-per-second budget.</desc>
+          <desc id="m1d">The AI agent on the left send requests to a stateless MCP server in the middle. Inside the server, a request passes through four layers in order: identify the caller, rate limit, cache, and circuit breaker. Only cache misses that pass every layer continue to the registry API on the right, under a fixed requests-per-second budget.</desc>
           <g class="svgtext">
             <rect x="10" y="100" width="130" height="100" rx="6" class="f-soft"/>
-            <text x="75" y="140" text-anchor="middle">AI clients</text>
-            <text x="75" y="160" text-anchor="middle" class="t-muted">assistants,</text>
-            <text x="75" y="176" text-anchor="middle" class="t-muted">agents</text>
+            <text x="75" y="140" text-anchor="middle">AI agent</text>
+            <text x="75" y="160" text-anchor="middle" class="t-muted">internal,</text>
+            <text x="75" y="176" text-anchor="middle" class="t-muted">many users</text>
             <line x1="140" y1="150" x2="176" y2="150" class="s-axis"/>
             <path d="M176 145 L184 150 L176 155 Z" class="f-strong"/>
             <rect x="186" y="20" width="268" height="260" rx="6" class="f-soft"/>
@@ -777,7 +777,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
       <p>There were three realistic places to put this server, and I wrote up all three before recommending one.</p>
       <p><b>1. A standalone service.</b> A new, separate deployment that calls the registry's existing API like any other consumer. It has its own pods, its own limits and its own release schedule.</p>
       <p><b>2. An endpoint inside the registry.</b> Add an MCP endpoint to the registry service itself, reusing code that already exists there. Fewest moving parts, and the freshest possible data.</p>
-      <p><b>3. Extend an existing AI agent.</b> There was already an LLM agent that answers questions about the registry. Add the MCP tools to it.</p>
+      <p><b>3. Extend an existing AI agent.</b> There was already a separate LLM agent that answers questions about the registry. Add the MCP tools to it.</p>
       <figure class="mfig">
         <svg viewBox="0 0 640 210" role="img" aria-labelledby="m2t m2d">
           <title id="m2t">Where each option puts AI traffic</title>
@@ -808,12 +808,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
       </figure>
       <p>Option 2 was tempting. It's the least code and the data is never stale. But it puts AI traffic in the same process, the same database connection pool and the same release cycle as the system it's supposed to protect. A runaway agent loop would compete directly with every other consumer. And every change to a rate limit would mean a release of the core registry, which is exactly the kind of release you want to be rare.</p>
       <p>Option 3 reused something that already existed, but that agent was built for a different job: it uses its own LLM to <i>answer questions</i>. An MCP server should just <i>return data</i> and let the caller's own model do the thinking. Putting simple, deterministic lookups inside an LLM service also means they inherit that service's dependencies and its path to production, which had nothing to do with serving two read-only tools.</p>
-      <p>Option 1 costs the most up front: a new service, its own onboarding as a registry consumer, its own deployment. In exchange, it gets the one property the other two can't offer. From the registry's point of view, all AI traffic becomes <i>one well-behaved consumer with a fixed budget</i>. That's the option I recommended, and the one we went with.</p>
+      <p>Option 1 costs the most up front: a new service, its own onboarding as a registry consumer, its own deployment. In exchange, it gets the one property the other two can't offer. From the registry's point of view, all AI traffic becomes <i>one well-behaved consumer with a fixed budget</i>. That's the option I recommended, and the one we went with. Today it's used by 500+ application teams, serving thousands of engineers.</p>
 
       <h2>Putting a ceiling on the load</h2>
-      <p>Here's the part I like most, because it turns "we'll be careful" into a number. Say AI clients send λ requests per second, and the cache answers a fraction <i>h</i> of them. The load that reaches the registry is:</p>
+      <p>Here's the part I like most, because it turns "we'll be careful" into a number. Say the agent sends λ requests per second, and the cache answers a fraction <i>h</i> of them. The load that reaches the registry is:</p>
       <div class="meq"><math display="block"><msub><mi>λ</mi><mtext>registry</mtext></msub><mo>=</mo><mo>min</mo><mo>(</mo><mo>(</mo><mn>1</mn><mo>−</mo><mi>h</mi><mo>)</mo><mo>·</mo><mi>λ</mi><mo>,</mo><mspace width="0.3em"/><mi>R</mi><mo>)</mo></math><p class="mkey">misses that get through, but never more than the budget R</p></div>
-      <p>The cache handles the common case. Assistants ask about the same few services over and over, so <i>h</i> is high: 160 requests a second with a 90% hit rate turns into 16. The budget <i>R</i> handles the bad case. If something weird happens (a new agent with no repeats, or a cold cache after a deploy), the registry still never sees more than <i>R</i>. Requests beyond that wait briefly or get a clear "slow down" error, and that error goes to the AI client, not the registry.</p>
+      <p>The cache handles the common case. Engineers ask the agent about the same few services over and over, so <i>h</i> is high: 160 requests a second with a 90% hit rate turns into 16. The budget <i>R</i> handles the bad case. If something weird happens (a burst of questions with no repeats, or a cold cache after a deploy), the registry still never sees more than <i>R</i>. Requests beyond that wait briefly or get a clear "slow down" error, and that error goes to the agent, not the registry.</p>
       <figure class="mfig">
         <svg viewBox="0 0 640 200" role="img" aria-labelledby="m3t m3d">
           <title id="m3t">Load at each layer</title>
@@ -858,10 +858,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
         </svg>
         <figcaption>When the registry is having a bad time, the breaker opens and stops sending it traffic, so it has room to recover.</figcaption>
       </figure>
-      <p>Each call also has a timeout, so a slow registry can't tie up the server's workers, and each response has a size cap. That last one sounds minor, but the full record for a big application (every environment, every policy, every consumer) is huge. Dumping all of it into an assistant's context window is slow and expensive, and it makes the model's answer worse. So the tools return focused, bounded slices: the app-level summary, or one environment at a time.</p>
+      <p>Each call also has a timeout, so a slow registry can't tie up the server's workers, and each response has a size cap. That last one sounds minor, but the full record for a big application (every environment, every policy, every consumer) is huge. Dumping all of it into an agent's context window is slow and expensive, and it makes the model's answer worse. So the tools return focused, bounded slices: the app-level summary, or one environment at a time.</p>
 
       <h2>Who's calling?</h2>
-      <p>The registry's normal consumer model assumes a service with its own credentials. That doesn't fit an engineer running an assistant on a laptop. But every call still has to be attributable to someone, both for the per-client rate limits and for audit.</p>
+      <p>The registry's normal consumer model assumes a service with its own credentials. That doesn't fit an agent acting on behalf of many engineers. But every call still has to be attributable to someone, both for the per-client rate limits and for audit.</p>
       <p>I laid out three options: OAuth through the company's identity provider (MCP's standard auth flow, where the server advertises its authorization server and validates each caller's token), a simpler per-team client ID for a first internal-only phase, or an allow-list of client identities per environment. OAuth is the cleanest long-term answer, since each call maps to a real person and access could later be scoped per user. A client ID gets you attribution on day one. Which one to ship first was a call for security, not just me, so the design keeps auth as one swappable layer at the front.</p>
 
       <h2>What it costs</h2>
@@ -870,7 +870,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
 
       <h2>One nice loop</h2>
       <p>The registry also keeps a catalog of MCP servers: services declare their MCP endpoint, transport and auth, and the registry stores it so they're discoverable. So the new server registers itself in the very registry it reads from. It's both a consumer of the catalog and an entry in it.</p>
-      <p>That points at the obvious next tool: <i>find MCP servers and agents</i>, filtered by category or owner. Then an assistant could ask the registry not just about services, but about other tools it could use.</p>
+      <p>That points at the obvious next tool: <i>find MCP servers and agents</i>, filtered by category or owner. Then the agent could ask the registry not just about services, but about other tools it could use.</p>
 
       <hr>
       <p>The lesson I keep coming back to is that "AI-ready" mostly means "ready for clients that are relentless, repetitive and a little forgetful." The tools were never the hard part. Deciding where to draw the box, and putting a hard number on what crosses it, was.</p>
