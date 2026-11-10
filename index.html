@@ -393,7 +393,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
     <div class="works">
       <ol class="steps">
         <li><b>Replace the tokenizer.</b> Whisper's byte-level BPE chops non-Latin scripts into tiny pieces. We train a BPE tokenizer on each language's own text, raising the median from 2.38 to 5.04 characters per token (13.77× for Lao).</li>
-        <li><b>Warm-start the new embeddings.</b> Each new token starts as the sum of the old Whisper sub-token vectors it replaces, so the model keeps what it already knows.</li>
+        <li><b>Warm-start the new embeddings.</b> Each new token starts as the average of the old Whisper sub-token vectors it replaces, so the model keeps what it already knows.</li>
         <li><b>Teach the decoder the new vocabulary.</b> Mix text-only language modeling (on the Goldfish corpora) with speech recognition, then finish with plain ASR fine-tuning.</li>
         <li><b>Pick the best per language.</b> Simple fine-tuning or the full recipe, three configurations each: 612 fine-tuned models in total.</li>
       </ol>
@@ -518,6 +518,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
         <h3>Walmart Global Tech · Platform Engineer</h3>
         <p>Production infrastructure for internal agentic AI, multi-agent and ML systems: model serving, inference routing, rollout and evaluation.</p>
         <ul class="work-points">
+          <li>Proposed the architecture for an MCP server that gives AI coding assistants read-only access to a core platform registry. My design was adopted. <a href="#mcp-server" style="color:var(--gilt)">How I designed it →</a></li>
           <li>Cut cross-region inference latency 45% by geo-sharding model traffic with Istio and consistent-hash routing for session affinity.</li>
           <li>Own model rollouts with Flagger: canary analysis, Prometheus/Grafana success-rate gating, autoscaling and automatic rollback on regressions.</li>
           <li>Built pre-release evaluation for non-deterministic agent behavior, comparing responses across production, QA and staging to catch behavioral diffs before release.</li>
@@ -529,6 +530,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
         <p>CUDA kernels and KV caching (30% lower inference latency), and predictive maintenance on hardware telemetry.</p>
       </div></div>
     </div>
+
   </div>
 </section>
 
@@ -543,7 +545,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
       <!-- Posts go in this list, newest first:
         <li class="post"><span class="when">Nov 2026</span><div><h3><a href="URL">Title</a></h3><p>One-line summary.</p></div></li>
       -->
-      <ul class="posts" id="posts"><li class="post"><span class="when">29 Oct 2026</span><div><h3><a href="#cloudflare-qa">What the Cloudflare Q&amp;A made me think about</a></h3><p>Fewer tokens or cheaper tokens, tokenizers for CTC, BPE vs Unigram, and RL with GRPO: five research directions for BuzzASR 2.0.</p></div></li></ul>
+      <ul class="posts" id="posts"><li class="post"><span class="when">30 Oct 2026</span><div><h3><a href="#mcp-server">Putting an MCP server in front of a system you can't afford to break</a></h3><p>Three ways to give AI coding assistants access to a core registry, why the boring option won, and the math behind a hard load ceiling.</p></div></li><li class="post"><span class="when">29 Oct 2026</span><div><h3><a href="#cloudflare-qa">What the Cloudflare Q&amp;A made me think about</a></h3><p>Fewer tokens or cheaper tokens, tokenizers for CTC, BPE vs Unigram, and RL with GRPO: five research directions for BuzzASR 2.0.</p></div></li></ul>
       <div class="lectern" id="posts-empty">
         <p class="lectern-title">Nothing on the lectern yet</p>
         <p>The first essays are being written. Check back soon, or say hi below and I'll send them your way.</p>
@@ -587,35 +589,53 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
 
       <h2>Fewer tokens, or cheaper tokens?</h2>
       <p>The question was roughly this: you got your speedup by changing the tokenizer. Could you get the same thing by changing what the encoder hands to the decoder?</p>
-      <p>I find it easiest to think of decoding time as two numbers multiplied together:</p>
+      <p>I find it easiest to start with one person waiting for one transcription. Then decoding time is two numbers multiplied together:</p>
       <div class="meq"><math display="block"><mi>T</mi><mo>≈</mo><mi>N</mi><mo>·</mo><mo>(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>+</mo><mi>k</mi><mi>F</mi><mo>)</mo></math></div>
       <p><i>N</i> is how many tokens the model writes, and the part in brackets is what each one costs. Some of that cost is fixed, and some of it grows with <i>F</i>, the number of audio frames the decoder looks at every time it writes a token.</p>
-      <p>Our tokenizers shrink <i>N</i>. For one Estonian sentence, Whisper needs 28 tokens and our model needs 10. The cost per token didn't change at all in our measurements (about 73 tokens a second for every model), so the whole speedup came from writing fewer tokens.</p>
-      <p>The question from the audience is about the other number, <i>F</i>. Whisper always pads audio to 30 seconds, so its encoder produces 1,500 frames even if you only said three words, and every token the decoder writes has to look at all of them.</p>
+      <p>Our tokenizers shrink <i>N</i>. For one Estonian sentence, Whisper needs 28 tokens and our model needs 10. The cost per token didn't change in our measurements (about 73 tokens a second for every model), so the whole speedup came from writing fewer tokens.</p>
+      <p>The question from the audience is about the other number, <i>F</i>. Whisper always pads audio to 30 seconds, so its encoder produces 1,500 frames even if you only said three words, and every token the decoder writes looks at all of them. Cut that to the 300 frames a 6-second clip actually needs, and every token should get cheaper.</p>
+      <p>When I worked through the numbers after the talk, that turned out to be mostly wrong, and the reason is the interesting part. In our setup each token takes about 13.7 ms. The GPU needs only about 1 ms to read everything a decoding step touches: roughly 1.8 GB of decoder weights, plus about 0.25 GB of cached audio for the 1,500 frames. The rest is overhead: the Python loop, hundreds of small GPU calls per step, and the checks that stop the model repeating itself. So the part that depends on frames, <i>kF</i>, is under 1% of each token's time. The fixed cost <i>t</i>₀ is almost everything, which is why writing fewer tokens works so well.</p>
+      <p>But that's only true for one request at a time. A service like Cloudflare's runs many requests together on each GPU, and then what matters is total computation, not waiting time. Here the picture flips. For a 6-second clip, the encoder and the audio lookups it prepares cost about 2.6 trillion operations, most of it spent on padding. The decoder's 28 tokens cost about 0.06 trillion. Going from 28 tokens to 10 saves under 2% of the work. Trimming the padding saves about 80%.</p>
       <figure class="mfig">
-        <svg viewBox="0 0 640 230" role="img" aria-labelledby="d1t d1d">
-          <title id="d1t">Work per sentence, steps times frames</title>
-          <desc id="d1d">Three rectangles drawn to scale. Whisper: 28 steps by 1,500 frames. New tokenizer: 10 steps by 1,500 frames. New tokenizer with padding trimmed for a 6-second clip: 10 steps by 300 frames, about 14 times less work.</desc>
+        <svg viewBox="0 0 640 300" role="img" aria-labelledby="d1t d1d">
+          <title id="d1t">Where the cost goes, one request versus many</title>
+          <desc id="d1d">Two panels of estimated cost for one 6-second clip. Left, waiting time for a single request: Whisper's tokens with 1,500 frames about 400 ms, BuzzASR's tokens with 1,500 frames about 154 ms, BuzzASR's tokens with 300 frames about 139 ms; decoding dominates. Right, total computation when many requests share the GPU: 2.63, 2.61 and 0.47 trillion operations; the encoder dominates.</desc>
           <g class="svgtext">
-            <rect x="20" y="40" width="280" height="150" class="f-soft"/>
-            <text x="20" y="28">Whisper's tokenizer</text>
-            <text x="160" y="120" text-anchor="middle" class="t-muted">28 × 1,500</text>
-            <text x="160" y="212" text-anchor="middle" class="t-muted">28 tokens</text>
-            <rect x="340" y="40" width="100" height="150" class="f-mid"/>
-            <text x="340" y="28">New tokenizer</text>
-            <text x="390" y="120" text-anchor="middle" class="t-muted">10 × 1,500</text>
-            <text x="390" y="212" text-anchor="middle" class="t-muted">10 tokens</text>
-            <rect x="490" y="160" width="100" height="30" class="f-strong"/>
-            <text x="490" y="28">+ padding trimmed</text>
-            <text x="540" y="150" text-anchor="middle" class="t-muted">10 × 300</text>
-            <text x="540" y="212" text-anchor="middle" class="t-muted">10 tokens</text>
+            <text x="10" y="22" style="font-weight:700">One request (waiting time)</text>
+            <text x="10" y="40" class="t-muted">milliseconds per clip</text>
+            <text x="10" y="70">Whisper tokens · 1,500 frames</text>
+            <rect x="10" y="78" width="8.5" height="22" class="f-mid"/><rect x="18.5" y="78" width="191.5" height="22" class="f-strong"/>
+            <text x="216" y="94">~400</text>
+            <text x="10" y="128">BuzzASR tokens · 1,500 frames</text>
+            <rect x="10" y="136" width="8.5" height="22" class="f-mid"/><rect x="18.5" y="136" width="68.5" height="22" class="f-strong"/>
+            <text x="93" y="152">~154</text>
+            <text x="10" y="186">BuzzASR tokens · 300 frames</text>
+            <rect x="10" y="194" width="1.5" height="22" class="f-mid"/><rect x="11.5" y="194" width="68" height="22" class="f-strong"/>
+            <text x="86" y="210">~139</text>
+
+            <text x="330" y="22" style="font-weight:700">Many requests (computation)</text>
+            <text x="330" y="40" class="t-muted">trillion operations per clip</text>
+            <text x="330" y="70">Whisper tokens · 1,500 frames</text>
+            <rect x="330" y="78" width="195.4" height="22" class="f-mid"/><rect x="525.4" y="78" width="4.6" height="22" class="f-strong"/>
+            <text x="536" y="94">2.63</text>
+            <text x="330" y="128">BuzzASR tokens · 1,500 frames</text>
+            <rect x="330" y="136" width="195.4" height="22" class="f-mid"/><rect x="525.4" y="136" width="1.5" height="22" class="f-strong"/>
+            <text x="533" y="152">2.61</text>
+            <text x="330" y="186">BuzzASR tokens · 300 frames</text>
+            <rect x="330" y="194" width="34.2" height="22" class="f-mid"/><rect x="364.2" y="194" width="1.5" height="22" class="f-strong"/>
+            <text x="372" y="210">0.47</text>
+
+            <rect x="10" y="246" width="14" height="14" class="f-mid"/><text x="30" y="258">encoder</text>
+            <rect x="110" y="246" width="14" height="14" class="f-strong"/><text x="130" y="258">decoding</text>
+            <text x="10" y="288" class="t-muted">Estimates, not measurements: one 6-second clip, Whisper-large-v3 on an A100.</text>
           </g>
         </svg>
-        <figcaption>Each box is tokens × audio frames for the same sentence, drawn to scale, assuming a 6-second clip. Changing the tokenizer makes the box narrower. Trimming the padding makes it shorter. Together it's about 14× less work.</figcaption>
+        <figcaption>Left: for one request, decoding is almost all the time, so fewer tokens is what helps. Right: when many requests share the GPU, the encoder is almost all the work, so fewer frames is what helps.</figcaption>
       </figure>
-      <p>If you could cut <i>F</i> without losing what's in the audio, every token would get cheaper. And because the two effects multiply, you'd keep the tokenizer gains on top.</p>
-      <p>I'd start with the boring version: throw away the frames that are just padding. Most of our test clips are well under 30 seconds, so that alone might be a big win. After that I'd try averaging neighbouring frames, merging frames that look the same (silence, long vowels), and finally a small learned layer that squeezes the encoder output into a fixed number of vectors.</p>
+      <p>So the answer to the question is: it depends who's paying. For someone waiting on their phone, fewer tokens. For whoever runs the GPUs, fewer frames. The two don't multiply into one big speedup; each one wins in a different setting.</p>
+      <p>I'd start with the boring version: throw away the frames that are just padding. Most of our test clips are well under 30 seconds, so for batched serving that alone should be a big win. One catch: Whisper was trained on 30-second windows, so feeding it less audio costs some accuracy unless you fine-tune it on shorter windows. After that I'd try averaging neighbouring frames, merging frames that look the same (silence, long vowels), and finally a small learned layer that squeezes the encoder output into a fixed number of vectors.</p>
       <p>What worries me is who pays for it. Squeezing the audio will probably hurt fast speech and low-resource languages first, and those are exactly the languages BuzzASR exists for. So every result has to be broken down by language, not averaged.</p>
+      <p>The numbers above are estimates from the model's size, so the next step is to measure them: time the encoder and the decoder separately for a single request, then count clips per second with many requests at 1,500 versus 300 frames, checking the error rate alongside.</p>
 
       <h2>Does this work beyond Whisper?</h2>
       <p>Everything we built sits on top of Whisper, so it's fair to ask whether we just got lucky with Whisper's tokenizer.</p>
@@ -702,6 +722,162 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
     <p class="mend"><a href="#reading-room">← Back to the site</a></p>
   </div>
 </article>
+<article class="post-view" id="mcp-server" hidden aria-labelledby="post2-title">
+  <div class="mbar"><div class="mcol"><a href="#reading-room" class="mhome">← Shivam Singh</a></div></div>
+  <div class="mcol">
+    <h1 class="mtitle" id="post2-title">Putting an MCP server in front of a system you can't afford to break</h1>
+    <p class="msub">How I designed a read-only bridge between AI coding assistants and a core platform registry, and why the boring option won.</p>
+    <p class="mmeta">Shivam Singh · 9 min read · Oct 30, 2026</p>
+
+    <div class="mbody">
+      <p>Every large engineering org has a system everyone quietly depends on. Ours is a registry: for every application, it knows who owns it, what environments it runs in, what it talks to, which policies apply and where its endpoints live. People look things up in a web portal. Programs talk to it through an API, after they've registered as a consumer and written their own queries.</p>
+      <p>Then AI coding assistants showed up. Engineers wanted to ask Claude Code, Copilot or Cursor "who owns this service?" or "what's configured in prod?" and get a real answer, not a guess. The standard way to give an assistant that ability is MCP, the Model Context Protocol: you run a server that offers a few tools, and any MCP client can call them.</p>
+      <p>Writing the tools is an afternoon. The hard part is that the thing on the other end is a system the rest of the platform needs to stay up. This post is about the design I proposed for that bridge, the three options I compared, and why we went with the most boring one.</p>
+
+      <h2>AI clients are not normal API clients</h2>
+      <p>A normal API consumer is a program someone wrote on purpose. It calls you at a predictable rate, it was load-tested (hopefully), and when it breaks someone gets paged. An AI assistant behaves differently in three ways that matter:</p>
+      <p><b>It's bursty.</b> An agent working through a task can call the same tool ten times in a few seconds, often with the same argument, because it forgot it already asked.</p>
+      <p><b>It retries.</b> If a call fails, the client retries, the agent retries, and sometimes the human hits enter again. Each layer means well. Together they multiply.</p>
+      <p><b>It fans out.</b> One prompt like "check all our services" can turn into dozens of calls at once. Multiply by every engineer with an assistant open, and the traffic shape looks nothing like what the registry was built for.</p>
+      <p>So the real requirement wasn't "expose the data." It was: <i>no matter what the AI clients do, the load reaching the registry has a hard ceiling.</i></p>
+
+      <h2>The shape of it</h2>
+      <p>The server offers exactly two tools, both read-only. One returns an application's details. The other returns its details for a single environment. Nothing writes, which removes a whole class of problems (and makes retries safe, as we'll see).</p>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 300" role="img" aria-labelledby="m1t m1d">
+          <title id="m1t">Request path from AI client to registry</title>
+          <desc id="m1d">AI clients on the left send requests to a stateless MCP server in the middle. Inside the server, a request passes through four layers in order: identify the caller, rate limit, cache, and circuit breaker. Only cache misses that pass every layer continue to the registry API on the right, under a fixed requests-per-second budget.</desc>
+          <g class="svgtext">
+            <rect x="10" y="100" width="130" height="100" rx="6" class="f-soft"/>
+            <text x="75" y="140" text-anchor="middle">AI clients</text>
+            <text x="75" y="160" text-anchor="middle" class="t-muted">assistants,</text>
+            <text x="75" y="176" text-anchor="middle" class="t-muted">agents</text>
+            <line x1="140" y1="150" x2="176" y2="150" class="s-axis"/>
+            <path d="M176 145 L184 150 L176 155 Z" class="f-strong"/>
+            <rect x="186" y="20" width="268" height="260" rx="6" class="f-soft"/>
+            <text x="320" y="44" text-anchor="middle">MCP server (stateless)</text>
+            <rect x="206" y="60" width="228" height="38" rx="4" class="f-mid"/><text x="320" y="84" text-anchor="middle">1 · who is calling?</text>
+            <rect x="206" y="108" width="228" height="38" rx="4" class="f-mid"/><text x="320" y="132" text-anchor="middle">2 · rate limit (per client, global)</text>
+            <rect x="206" y="156" width="228" height="38" rx="4" class="f-mid"/><text x="320" y="180" text-anchor="middle">3 · cache (60 s)</text>
+            <rect x="206" y="204" width="228" height="38" rx="4" class="f-mid"/><text x="320" y="228" text-anchor="middle">4 · circuit breaker</text>
+            <text x="320" y="266" text-anchor="middle" class="t-muted">timeouts · payload cap</text>
+            <line x1="454" y1="150" x2="490" y2="150" class="s-axis"/>
+            <path d="M490 145 L498 150 L490 155 Z" class="f-strong"/>
+            <rect x="500" y="100" width="130" height="100" rx="6" class="f-strong"/>
+            <text x="565" y="140" text-anchor="middle">Registry API</text>
+            <text x="565" y="160" text-anchor="middle">≤ R requests</text>
+            <text x="565" y="176" text-anchor="middle">per second</text>
+          </g>
+        </svg>
+        <figcaption>Every guardrail sits in front of the registry, not inside it. A request only reaches the registry if it gets through all four layers and misses the cache.</figcaption>
+      </figure>
+      <p>The server speaks MCP over Streamable HTTP in stateless mode. That means it keeps no session between calls, so any copy of the server can answer any request. Scaling out is just running more copies behind a load balancer, and a crashed copy loses nothing.</p>
+
+      <h2>Three ways to build it</h2>
+      <p>There were three realistic places to put this server, and I wrote up all three before recommending one.</p>
+      <p><b>1. A standalone service.</b> A new, separate deployment that calls the registry's existing API like any other consumer. It has its own pods, its own limits and its own release schedule.</p>
+      <p><b>2. An endpoint inside the registry.</b> Add an MCP endpoint to the registry service itself, reusing code that already exists there. Fewest moving parts, and the freshest possible data.</p>
+      <p><b>3. Extend an existing AI agent.</b> There was already an LLM agent that answers questions about the registry. Add the MCP tools to it.</p>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 210" role="img" aria-labelledby="m2t m2d">
+          <title id="m2t">Where each option puts AI traffic</title>
+          <desc id="m2d">Three panels. Option 1: AI traffic hits a separate box, which sends a thin, capped stream to the registry. Option 2: AI traffic lands directly inside the registry box. Option 3: AI traffic lands in an agent box that also contains a language model, retrieval and a crawler, which then calls the registry.</desc>
+          <g class="svgtext" text-anchor="middle">
+            <text x="105" y="20">1 · standalone</text>
+            <rect x="45" y="40" width="120" height="50" rx="5" class="f-mid"/><text x="105" y="70">MCP server</text>
+            <line x1="105" y1="90" x2="105" y2="130" class="s-axis"/>
+            <text x="135" y="115" class="t-muted">capped</text>
+            <rect x="45" y="130" width="120" height="50" rx="5" class="f-strong"/><text x="105" y="160">Registry</text>
+
+            <text x="320" y="20">2 · inside the registry</text>
+            <rect x="250" y="40" width="140" height="140" rx="5" class="f-strong"/>
+            <rect x="265" y="55" width="110" height="40" rx="4" class="f-soft"/><text x="320" y="80">MCP endpoint</text>
+            <text x="320" y="130">Registry</text>
+            <text x="320" y="150" class="t-muted" style="fill:var(--p-fg)">shared fate</text>
+
+            <text x="535" y="20">3 · inside an AI agent</text>
+            <rect x="465" y="40" width="140" height="80" rx="5" class="f-soft"/>
+            <text x="535" y="62">Agent</text>
+            <text x="535" y="82" class="t-muted">LLM · retrieval</text>
+            <text x="535" y="100" class="t-muted">crawler · MCP tools</text>
+            <line x1="535" y1="120" x2="535" y2="140" class="s-axis"/>
+            <rect x="475" y="140" width="120" height="40" rx="5" class="f-strong"/><text x="535" y="165">Registry</text>
+          </g>
+        </svg>
+        <figcaption>The question for each option: when AI traffic misbehaves, what else goes down with it?</figcaption>
+      </figure>
+      <p>Option 2 was tempting. It's the least code and the data is never stale. But it puts AI traffic in the same process, the same database connection pool and the same release cycle as the system it's supposed to protect. A runaway agent loop would compete directly with every other consumer. And every change to a rate limit would mean a release of the core registry, which is exactly the kind of release you want to be rare.</p>
+      <p>Option 3 reused something that already existed, but that agent was built for a different job: it uses its own LLM to <i>answer questions</i>. An MCP server should just <i>return data</i> and let the caller's own model do the thinking. Putting simple, deterministic lookups inside an LLM service also means they inherit that service's dependencies and its path to production, which had nothing to do with serving two read-only tools.</p>
+      <p>Option 1 costs the most up front: a new service, its own onboarding as a registry consumer, its own deployment. In exchange, it gets the one property the other two can't offer. From the registry's point of view, all AI traffic becomes <i>one well-behaved consumer with a fixed budget</i>. That's the option I recommended, and the one we went with.</p>
+
+      <h2>Putting a ceiling on the load</h2>
+      <p>Here's the part I like most, because it turns "we'll be careful" into a number. Say AI clients send λ requests per second, and the cache answers a fraction <i>h</i> of them. The load that reaches the registry is:</p>
+      <div class="meq"><math display="block"><msub><mi>λ</mi><mtext>registry</mtext></msub><mo>=</mo><mo>min</mo><mo>(</mo><mo>(</mo><mn>1</mn><mo>−</mo><mi>h</mi><mo>)</mo><mo>·</mo><mi>λ</mi><mo>,</mo><mspace width="0.3em"/><mi>R</mi><mo>)</mo></math><p class="mkey">misses that get through, but never more than the budget R</p></div>
+      <p>The cache handles the common case. Assistants ask about the same few services over and over, so <i>h</i> is high: 160 requests a second with a 90% hit rate turns into 16. The budget <i>R</i> handles the bad case. If something weird happens (a new agent with no repeats, or a cold cache after a deploy), the registry still never sees more than <i>R</i>. Requests beyond that wait briefly or get a clear "slow down" error, and that error goes to the AI client, not the registry.</p>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 200" role="img" aria-labelledby="m3t m3d">
+          <title id="m3t">Load at each layer</title>
+          <desc id="m3d">Bars shrinking from left to right: 200 requests per second from clients, 160 after per-client rate limits, 16 after a 90 percent cache hit rate, and at most the budget R reaching the registry.</desc>
+          <g class="svgtext" text-anchor="middle">
+            <line x1="40" y1="160" x2="620" y2="160" class="s-axis"/>
+            <rect x="70" y="40" width="100" height="120" class="f-soft"/><text x="120" y="32">200 /s</text><text x="120" y="180" class="t-muted">from clients</text>
+            <rect x="210" y="64" width="100" height="96" class="f-mid"/><text x="260" y="56">160 /s</text><text x="260" y="180" class="t-muted">after rate limits</text>
+            <rect x="350" y="150" width="100" height="10" class="f-mid"/><text x="400" y="142">16 /s</text><text x="400" y="180" class="t-muted">cache misses</text>
+            <rect x="490" y="148" width="100" height="12" class="f-strong"/><text x="540" y="140">≤ R</text><text x="540" y="180" class="t-muted">reaches registry</text>
+          </g>
+        </svg>
+        <figcaption>Illustrative numbers. The point is the shape: most of the traffic is absorbed before it gets anywhere near the registry.</figcaption>
+      </figure>
+      <p>The rate limits themselves are token buckets: each client gets a bucket that refills at a steady rate <i>r</i> up to a size <i>B</i>, and every call takes one token.</p>
+      <div class="meq"><math display="block"><mtext>tokens</mtext><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mo>min</mo><mo>(</mo><mi>B</mi><mo>,</mo><mspace width="0.3em"/><mtext>tokens</mtext><mo>(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>)</mo><mo>+</mo><mi>r</mi><mo>·</mo><mo>(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mn>0</mn></msub><mo>)</mo><mo>)</mo></math></div>
+      <p>The bucket size lets an agent burst a little (which is fine, it's how they work), and the refill rate stops one agent from hogging the shared budget. There's a per-client bucket and a global one, so one noisy team can't starve everyone else, and everyone together can't exceed <i>R</i>.</p>
+      <p>The budget has to live in code, not in a doc. A number in a design doc is a promise. A number in the server's config, enforced on every call, is a guarantee.</p>
+
+      <h2>Retries can multiply load, so cap them</h2>
+      <p>Retries look harmless until you do the math. If a call fails with probability <i>p</i> and you allow up to <i>k</i> retries, the expected number of attempts per request is:</p>
+      <div class="meq"><math display="block"><mi>E</mi><mo>[</mo><mtext>attempts</mtext><mo>]</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>p</mi><mo>+</mo><msup><mi>p</mi><mn>2</mn></msup><mo>+</mo><mo>⋯</mo><mo>+</mo><msup><mi>p</mi><mi>k</mi></msup></math></div>
+      <p>When things are healthy, <i>p</i> is tiny and this is about 1. But when the registry is struggling, <i>p</i> heads toward 1 and every request turns into <i>k</i> + 1 requests. With two retries, that triples your traffic at the exact moment the system can least afford it. That's how a slow dependency turns into a dead one.</p>
+      <p>Three rules keep this in check. Retries happen only on reads (all our tools are reads, so this is easy, and a read is always safe to repeat). They back off with jitter, so clients don't all retry at the same instant. And a circuit breaker sits in front of everything.</p>
+      <figure class="mfig">
+        <svg viewBox="0 0 640 215" role="img" aria-labelledby="m4t m4d">
+          <title id="m4t">Circuit breaker states</title>
+          <desc id="m4d">Three states. Closed: calls go through. Too many failures moves it to open: calls fail fast without touching the registry. After a cool-down it moves to half-open: a few test calls go through. If they succeed it returns to closed. If they fail it returns to open.</desc>
+          <g class="svgtext" text-anchor="middle">
+            <rect x="20" y="60" width="150" height="70" rx="35" class="f-mid"/><text x="95" y="92">closed</text><text x="95" y="112" class="t-muted">calls go through</text>
+            <rect x="245" y="60" width="150" height="70" rx="35" class="f-low"/><text x="320" y="92" style="fill:#fff">open</text><text x="320" y="112" style="fill:#fff">fail fast</text>
+            <rect x="470" y="60" width="150" height="70" rx="35" class="f-soft"/><text x="545" y="92">half-open</text><text x="545" y="112" class="t-muted">a few test calls</text>
+            <line x1="170" y1="80" x2="240" y2="80" class="s-axis"/><path d="M238 75 L246 80 L238 85 Z" class="f-strong"/>
+            <text x="207" y="50" class="t-muted">too many failures</text>
+            <line x1="395" y1="80" x2="465" y2="80" class="s-axis"/><path d="M463 75 L471 80 L463 85 Z" class="f-strong"/>
+            <text x="432" y="50" class="t-muted">after cool-down</text>
+            <path d="M560 130 C560 195, 80 195, 80 134" fill="none" class="s-axis"/><path d="M75 138 L80 130 L85 138 Z" class="f-strong"/>
+            <text x="320" y="208" class="t-muted">test calls succeed</text>
+            <path d="M510 128 C480 158, 360 158, 336 136" fill="none" class="s-axis"/><path d="M332 141 L334 131 L342 137 Z" class="f-strong"/>
+            <text x="425" y="165" class="t-muted">test calls fail</text>
+          </g>
+        </svg>
+        <figcaption>When the registry is having a bad time, the breaker opens and stops sending it traffic, so it has room to recover.</figcaption>
+      </figure>
+      <p>Each call also has a timeout, so a slow registry can't tie up the server's workers, and each response has a size cap. That last one sounds minor, but the full record for a big application (every environment, every policy, every consumer) is huge. Dumping all of it into an assistant's context window is slow and expensive, and it makes the model's answer worse. So the tools return focused, bounded slices: the app-level summary, or one environment at a time.</p>
+
+      <h2>Who's calling?</h2>
+      <p>The registry's normal consumer model assumes a service with its own credentials. That doesn't fit an engineer running an assistant on a laptop. But every call still has to be attributable to someone, both for the per-client rate limits and for audit.</p>
+      <p>I laid out three options: OAuth through the company's identity provider (MCP's standard auth flow, where the server advertises its authorization server and validates each caller's token), a simpler per-team client ID for a first internal-only phase, or an allow-list of client identities per environment. OAuth is the cleanest long-term answer, since each call maps to a real person and access could later be scoped per user. A client ID gets you attribution on day one. Which one to ship first was a call for security, not just me, so the design keeps auth as one swappable layer at the front.</p>
+
+      <h2>What it costs</h2>
+      <p>The honest trade-off is freshness. With a 60-second cache, an answer can be up to a minute behind the portal. For "who owns this service?" that's fine, since ownership doesn't change every minute. For "did my config change go out?" you'd want the portal. The TTL is a setting, not a constant, and the tool descriptions say plainly that results can lag slightly.</p>
+      <p>The other cost is one more service to run. I think that's the right price. A separate service is a separate thing that can break, but when it breaks, it breaks alone.</p>
+
+      <h2>One nice loop</h2>
+      <p>The registry also keeps a catalog of MCP servers: services declare their MCP endpoint, transport and auth, and the registry stores it so they're discoverable. So the new server registers itself in the very registry it reads from. It's both a consumer of the catalog and an entry in it.</p>
+      <p>That points at the obvious next tool: <i>find MCP servers and agents</i>, filtered by category or owner. Then an assistant could ask the registry not just about services, but about other tools it could use.</p>
+
+      <hr>
+      <p>The lesson I keep coming back to is that "AI-ready" mostly means "ready for clients that are relentless, repetitive and a little forgetful." The tools were never the hard part. Deciding where to draw the box, and putting a hard number on what crosses it, was.</p>
+    </div>
+    <p class="mend"><a href="#reading-room">← Back to the site</a></p>
+  </div>
+</article>
 <script>
 (() => {
   const whisper = ["·Rah","v","us","ra","amat","uk","og","u","·dig","ita","alar","hi","iv","·sis","ald","ab","·tu","hand","e","id","·van","u","·aj","ale","heart","ikle","id","."];
@@ -748,14 +924,27 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gilt); outline-
     }
   })();
   // reading view: show a post when its hash is in the address, otherwise the gallery
-  const route = () => {
-    const post = document.getElementById("cloudflare-qa"), gal = document.getElementById("gallery");
-    const on = location.hash === "#cloudflare-qa";
-    post.hidden = !on; gal.hidden = on;
+  const route = (hash) => {
+    hash = hash || "";
+    const gal = document.getElementById("gallery");
+    let on = false;
+    document.querySelectorAll(".post-view").forEach(p => { const m = hash === "#" + p.id; p.hidden = !m; on = on || m; });
+    gal.hidden = on;
     if (on) window.scrollTo(0, 0);
-    else if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+    else if (hash.length > 1) { const t = document.getElementById(hash.slice(1)); if (t) t.scrollIntoView(); }
   };
-  window.addEventListener("hashchange", route); route();
+  // Handle in-page links in script, so they also work inside embedded viewers that intercept link clicks.
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    const hash = a.getAttribute("href");
+    e.preventDefault();
+    try { if (location.hash !== hash) history.pushState(null, "", hash); } catch (err) {}
+    route(hash);
+  });
+  window.addEventListener("hashchange", () => route(location.hash));
+  window.addEventListener("popstate", () => route(location.hash));
+  route(location.hash);
   // bar chart, drawn to scale from the paper's numbers
   (() => {
     const data = [["<5%",0.93],["5–15%",1.59],["15–30%",2.41],["30–50%",3.20],["50–80%",4.84],["≥80%",6.27]];
